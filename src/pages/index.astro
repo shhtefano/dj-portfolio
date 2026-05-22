@@ -1,11 +1,43 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+
 import MainLayout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
-import Hero from "../components/Hero.jsx";
+import Hero from "../components/Hero.tsx";
 import About from "../components/About.astro";
 import Music from "../components/Music.astro";
+import Player from "../components/Player.jsx";
 import Gallery from "../components/Gallery.astro";
 import Contact from "../components/Contact.astro";
+
+// 1. Definiamo il percorso della cartella delle tracce
+const tracksDir = path.join(process.cwd(), 'public', 'tracks');
+let tracks:any = [];
+
+try {
+  // 2. Leggiamo i file nella cartella se esiste
+  if (fs.existsSync(tracksDir)) {
+    const files = fs.readdirSync(tracksDir);
+    
+    // 3. Filtriamo solo i file .mp3 e creiamo l'oggetto per il Player
+    tracks = files
+      .filter(file => file.endsWith('.mp3'))
+      .map((file, index) => {
+        // Rimuoviamo l'estensione .mp3 dal nome per usarlo come titolo
+        const title = path.parse(file).name; 
+        
+        return {
+          id: index + 1,
+          title: title, // Il titolo sarà esattamente il nome del file (es: "Deep House Session 2026")
+          artist: "DJ SHHTE",
+          src: `/tracks/${file}`
+        };
+      });
+  }
+} catch (error) {
+  console.error("Errore durante la lettura della cartella tracks:", error);
+}
 ---
 
 <MainLayout title="DJ SHHTE">
@@ -13,13 +45,16 @@ import Contact from "../components/Contact.astro";
   <Navbar />
 
   <Hero client:load />
+  
+    {/* 4. Passiamo l'array generato automaticamente come Prop al componente React */}
+    {tracks.length > 0 && <Player tracks={tracks} client:load />}
 
   <About />
 
   <Music />
 
-  <Gallery />
-
   <Contact />
+
+  <Gallery />
 
 </MainLayout>
