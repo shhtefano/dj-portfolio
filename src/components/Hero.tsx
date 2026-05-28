@@ -168,9 +168,7 @@ export default function Hero() {
         transition={{ duration: 1.5, ease: "easeOut" }}
         className="relative z-20 text-center px-4 max-w-5xl select-none"
       >
-        <p className="uppercase tracking-[0.6em] text-cyan-400 text-xs md:text-sm font-semibold mb-4 drop-shadow-[0_0_10px_rgba(34,211,238,0.3)]">
-          Open Format Artist
-        </p>
+    
 
         <h1 
           className="text-6xl md:text-[10rem] font-black leading-none text-white uppercase tracking-tighter"
@@ -179,7 +177,7 @@ export default function Hero() {
             WebkitTextStroke: "1px rgba(255,255,255,0.05)"
           }}
         >
-          DJ SHHTE
+          SHHTE
         </h1>
 
         <p className="pt-8 text-zinc-400 max-w-xl mx-auto text-base md:text-lg font-light tracking-widest uppercase">
