@@ -15,13 +15,13 @@ export default function Hero() {
     let height = (canvas.height = window.innerHeight);
 
     // --- CONFIGURAZIONE PARTICELLE (TUNNEL DI SFONDO) ---
-    const particleCount = 150;
+    const particleCount = 250;
     const particles: any[] = [];
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         angle: Math.random() * Math.PI * 2,
-        radius: 90 + Math.random() * 240,
-        speed: 0.0015 + Math.random() * 0.003,
+        radius: 180 + Math.random() * 240,
+        speed: 0.0085 + Math.random() * 0.003,
         size: 1 + Math.random() * 2,
         pulsePhase: Math.random() * Math.PI,
         color: i % 2 === 0 ? "34, 211, 238" : "139, 92, 246", // Ciano o Viola
@@ -48,21 +48,45 @@ export default function Hero() {
         lineWidth: 2.5,
       },
       {
-        amplitude: 55,
+        amplitude: 25,
         frequency: 0.006,
-        speed: 0.02,
+        speed: -0.02,
         colorStart: "#d946ef", // Fuchsia
         colorEnd: "#f97316",   // Arancione
-        lineWidth: 2,
+        lineWidth: 3,
       },
       {
-        amplitude: 25,
+        amplitude: 45,
         frequency: 0.018,
         speed: 0.05,
         colorStart: "#06b6d4", // Ciano chiaro
         colorEnd: "#8b5cf6",   // Viola intenso
-        lineWidth: 1.5,
-      }
+        lineWidth: 1,
+      },
+            {
+        amplitude: 55,
+        frequency: 0.006,
+        speed: 0.02,
+        colorStart: "#2f1b86", // Fuchsia
+        colorEnd: "#16adf9",   // Arancione
+        lineWidth: 2,
+      },
+            {
+        amplitude: 55,
+        frequency: 0.006,
+        speed: -0.02,
+        colorStart: "#d946ef", // Fuchsia
+        colorEnd: "#f9164b",   // Arancione
+        lineWidth: 2,
+      },
+            {
+        amplitude: 55,
+        frequency: 0.006,
+        speed: 0.02,
+        colorStart: "#ef7946", // Fuchsia
+        colorEnd: "#def916",   // Arancione
+        lineWidth: 2,
+      },
     ];
 
     let phase = 0;
@@ -121,9 +145,9 @@ export default function Hero() {
 
         for (let x = 0; x < width; x += 2) {
           // Equazione matematica dell'onda sinusoidale combinata con la fase dinamica
-          const y = waveBaseY + Math.sin(x * wave.frequency + (phase * wave.speed)) * wave.amplitude 
-                    // Aggiunge un pizzico di movimento organico extra ("rumore di fondo")
-                    * Math.cos(x * 0.002 + (phase * 0.005));
+          const y = waveBaseY + Math.sin(x * wave.frequency + (phase * wave.speed)) * wave.amplitude
+            // Aggiunge un pizzico di movimento organico extra ("rumore di fondo")
+            * Math.cos(x * 0.002 + (phase * 0.005));
 
           if (x === 0) {
             ctx.moveTo(x, y);
@@ -151,7 +175,7 @@ export default function Hero() {
 
   return (
     <section className="relative h-screen w-full overflow-hidden bg-black flex items-center justify-center">
-      
+
       {/* BACKGROUND GRADIENT */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-black to-zinc-950 z-0" />
 
@@ -168,9 +192,9 @@ export default function Hero() {
         transition={{ duration: 1.5, ease: "easeOut" }}
         className="relative z-20 text-center px-4 max-w-5xl select-none"
       >
-    
 
-        <h1 
+
+        <h1
           className="text-6xl md:text-[10rem] font-black leading-none text-white uppercase tracking-tighter"
           style={{
             textShadow: "0 0 30px rgba(255,255,255,0.15), 0 0 60px rgba(6,182,212,0.2)",
@@ -184,6 +208,10 @@ export default function Hero() {
           Commerciale • House • UKG • Bass • Club Energy
         </p>
       </motion.div>
+
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
+
 
       {/* SFUMATURA INFERIORE DI SICUREZZA */}
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-zinc-950 to-transparent z-30 pointer-events-none" />

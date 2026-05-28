@@ -146,7 +146,7 @@ export default function Player({ tracks = [] }) {
         <div className="w-full md:w-auto text-center md:text-left">
           <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Stai ascoltando</span>
           <h3 className="text-xl font-medium mt-1">
-            {currentTrack.title.replace(/[-_]/g, ' ')}
+            {currentTrack.title}
           </h3>
           <p className="text-zinc-400 text-sm">{currentTrack.artist}</p>
         </div>
