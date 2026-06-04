@@ -63,7 +63,7 @@ export default function Hero() {
         colorEnd: "#8b5cf6",   // Viola intenso
         lineWidth: 1,
       },
-            {
+      {
         amplitude: 55,
         frequency: 0.006,
         speed: 0.02,
@@ -71,7 +71,7 @@ export default function Hero() {
         colorEnd: "#16adf9",   // Arancione
         lineWidth: 2,
       },
-            {
+      {
         amplitude: 55,
         frequency: 0.006,
         speed: -0.02,
@@ -79,7 +79,7 @@ export default function Hero() {
         colorEnd: "#f9164b",   // Arancione
         lineWidth: 2,
       },
-            {
+      {
         amplitude: 55,
         frequency: 0.006,
         speed: 0.02,
@@ -193,16 +193,12 @@ export default function Hero() {
         className="relative z-20 text-center px-4 max-w-5xl select-none"
       >
 
+            <img
+      src="/images/logo_graffito.svg"
+      alt="DJ"
+      className="rounded-3xl w-full h-[300px] shadow-2xl"
+    />
 
-        <h1
-          className="text-6xl md:text-[10rem] font-black leading-none text-white uppercase tracking-tighter"
-          style={{
-            textShadow: "0 0 30px rgba(255,255,255,0.15), 0 0 60px rgba(6,182,212,0.2)",
-            WebkitTextStroke: "1px rgba(255,255,255,0.05)"
-          }}
-        >
-          SHHTE
-        </h1>
 
         <p className="pt-8 text-zinc-400 max-w-xl mx-auto text-base md:text-lg font-light tracking-widest uppercase">
           Commerciale • House • UKG • Bass • Club Energy

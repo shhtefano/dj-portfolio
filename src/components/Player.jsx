@@ -1,20 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-export default function Player({ tracks = [] }) {
-  if (tracks.length === 0) {
-    return (
-      <div className="text-center text-zinc-500 my-8 py-6 border border-dashed border-zinc-800 rounded-2xl max-w-4xl mx-auto">
-        Nessuna traccia trovata.
-      </div>
-    );
-  }
 
-  // 1. SELEZIONE CASUALE INIZIALE: Calcoliamo un indice random all'apertura della pagina
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(() => {
-    return Math.floor(Math.random() * tracks.length);
-  });
-
-  // 2. AUTOPLAY STATE: Impostiamo lo stato di riproduzione subito su true
-  const [isPlaying, setIsPlaying] = useState(true);
+export default function Player({ tracks = { previews: [], beats: [] } }) {
+  const [activeTab, setActiveTab] = useState('previews');
+  
+  // Sincronizziamo l'indice in modo che non vada mai fuori dai limiti della playlist attiva
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false); // Inizializzato a false per gestire l'autoplay via codice in modo pulito
   
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -25,7 +16,18 @@ export default function Player({ tracks = [] }) {
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
 
-  const currentTrack = tracks[currentTrackIndex];
+  // Recuperiamo la lista corrente in base al tab selezionato
+  const currentPlaylist = tracks[activeTab] || [];
+  
+  // Traccia correntemente attiva (con controllo di sicurezza)
+  const currentTrack = currentPlaylist[currentTrackIndex] || currentPlaylist[0];
+
+  // 1. RESET INDEX AL CAMBIO TAB
+  // Se l'utente cambia sezione, resettiamo l'indice alla prima traccia della nuova lista
+  useEffect(() => {
+    setCurrentTrackIndex(0);
+    setIsPlaying(true); // Fai partire la riproduzione della nuova sezione in automatico
+  }, [activeTab]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -33,8 +35,16 @@ export default function Player({ tracks = [] }) {
     }
   }, [volume, isMuted]);
 
-  // 3. EFFECT DI INIZIALIZZAZIONE AUDIO E AUTOPLAY
+  // 2. EFFECT DI INIZIALIZZAZIONE AUDIO E MANAGEMENT DELLE TRACCE
   useEffect(() => {
+    // Se la playlist attuale è vuota, non fare nulla
+    if (!currentTrack) return;
+
+    // Se c'è già un audio istanziato in memoria, fermalo prima di sovrascriverlo
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+
     audioRef.current = new Audio(currentTrack.src);
     const audio = audioRef.current;
 
@@ -48,14 +58,12 @@ export default function Player({ tracks = [] }) {
     audio.addEventListener('timeupdate', onTimeUpdate);
     audio.addEventListener('ended', onEnded);
 
-    // Forza l'autoplay ignorando in modo sicuro le restrizioni del browser
+    // Gestione sicura dell'Autoplay richiesta dai browser moderni
     if (isPlaying) {
       const playPromise = audio.play();
-      
       if (playPromise !== undefined) {
         playPromise.catch(err => {
-          console.log("Riproduzione automatica in attesa di interazione utente.");
-          // Se il browser blocca l'autoplay, resettiamo temporaneamente l'icona su "pausa"
+          console.log("Riproduzione automatica bloccata dal browser. In attesa di interazione.");
           setIsPlaying(false);
         });
       }
@@ -67,9 +75,10 @@ export default function Player({ tracks = [] }) {
       audio.removeEventListener('timeupdate', onTimeUpdate);
       audio.removeEventListener('ended', onEnded);
     };
-  }, [currentTrackIndex]);
+  }, [currentTrackIndex, activeTab]); // Re-inizializza l'audio quando cambia traccia OPPURE quando cambia tab
 
   const togglePlay = () => {
+    if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -79,26 +88,26 @@ export default function Player({ tracks = [] }) {
   };
 
   const handleNext = () => {
-    setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % tracks.length);
+    if (currentPlaylist.length === 0) return;
+    setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % currentPlaylist.length);
   };
 
   const handlePrev = () => {
-    setCurrentTrackIndex((prevIndex) => (prevIndex - 1 + tracks.length) % tracks.length);
+    if (currentPlaylist.length === 0) return;
+    setCurrentTrackIndex((prevIndex) => (prevIndex - 1 + currentPlaylist.length) % currentPlaylist.length);
   };
 
-  // Funzione per selezionare direttamente una traccia dalla playlist
   const handleSelectTrack = (index) => {
     if (index === currentTrackIndex) {
-      // Se clicca sulla traccia già attiva, fa Play/Pause
       togglePlay();
     } else {
       setCurrentTrackIndex(index);
-      setIsPlaying(true); // Avvia automaticamente la nuova traccia selezionata
+      setIsPlaying(true);
     }
   };
 
   const handleProgressClick = (e) => {
-    if (!progressBarRef.current || !duration) return;
+    if (!progressBarRef.current || !duration || !audioRef.current) return;
     
     const rect = progressBarRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
@@ -134,21 +143,69 @@ export default function Player({ tracks = [] }) {
 
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
 
+  // Interfaccia di Fallback se non ci sono tracce in assoluto
+  if (currentPlaylist.length === 0) {
+    return (
+      <section className="py-12 bg-zinc-900 text-white max-w-4xl mx-auto my-8 px-4 sm:px-6 rounded-2xl shadow-xl border border-zinc-800">
+        {/* Mantiene i Tab visibili così l'utente può comunque switchare sull'altra sezione funzionante */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-zinc-950 p-1.5 rounded-full border border-zinc-800 flex gap-1 w-full max-w-md">
+            <button onClick={() => setActiveTab('previews')} className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium uppercase transition-all duration-300 ${activeTab === 'previews' ? 'bg-amber-400 text-zinc-950 font-bold' : 'text-zinc-400'}`}>Tracks</button>
+            <button onClick={() => setActiveTab('beats')} className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium uppercase transition-all duration-300 ${activeTab === 'beats' ? 'bg-amber-400 text-zinc-950 font-bold' : 'text-zinc-400'}`}>Beats</button>
+          </div>
+        </div>
+        <div className="text-center text-zinc-500 py-6 border border-dashed border-zinc-800 rounded-2xl">
+          Nessuna traccia trovata in questa sezione.
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-12 bg-zinc-900 text-white max-w-4xl mx-auto my-8 px-4 sm:px-6 rounded-2xl shadow-xl border border-zinc-800">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold tracking-wider uppercase text-amber-400">Exclusive Previews</h2>
-        <p className="text-zinc-400 text-sm mt-1">Ascolta i miei ultimi progetti in lavorazione</p>
+      
+    <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold tracking-wider uppercase text-amber-400">
+          {activeTab === 'previews' ? 'Tracks by Shhte' : 'Prod by Shhte'}
+        </h2>
       </div>
+
+      {/* --- SEZIONE SWITCH / TABS --- */}
+      <div className="flex justify-center mb-8">
+        <div className="bg-zinc-950 p-1.5 rounded-full border border-zinc-800 flex gap-1 w-full max-w-md">
+          <button
+            onClick={() => setActiveTab('previews')}
+            className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium tracking-wide uppercase transition-all duration-300 ${
+              activeTab === 'previews'
+                ? 'bg-amber-400 text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            Tracks
+          </button>
+          <button
+            onClick={() => setActiveTab('beats')}
+            className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium tracking-wide uppercase transition-all duration-300 ${
+              activeTab === 'beats'
+                ? 'bg-amber-400 text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            Beats
+          </button>
+        </div>
+      </div>
+
+  
 
       {/* Info Traccia e Controlli Principali */}
       <div className="bg-zinc-950 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="w-full md:w-auto text-center md:text-left">
+        <div className="w-full md:w-auto text-center md:text-left truncate">
           <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Stai ascoltando</span>
-          <h3 className="text-xl font-medium mt-1">
-            {currentTrack.title}
+          <h3 className="text-xl font-medium mt-1 truncate">
+            {currentTrack?.title}
           </h3>
-          <p className="text-zinc-400 text-sm">{currentTrack.artist}</p>
+          <p className="text-zinc-400 text-sm truncate">{currentTrack?.artist}</p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto justify-end">
@@ -203,13 +260,13 @@ export default function Player({ tracks = [] }) {
         </div>
       </div>
 
-      {/* --- SEZIONE PLAYLIST --- */}
+      {/* --- SEZIONE PLAYLIST DINAMICA --- */}
       <div className="mt-8 border-t border-zinc-800 pt-6">
         <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-4 px-2">
-          Tracce Disponibili ({tracks.length})
+          {activeTab === 'previews' ? 'Tracce' : 'Beats'} ({currentPlaylist.length})
         </h4>
         <div className="space-y-1 max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800">
-          {tracks.map((track, index) => {
+          {currentPlaylist.map((track, index) => {
             const isCurrent = index === currentTrackIndex;
             return (
               <button
@@ -225,17 +282,14 @@ export default function Player({ tracks = [] }) {
                   {/* Numero o Icona di Stato */}
                   <div className="w-6 flex items-center justify-center font-mono text-xs text-zinc-500 group-hover:text-amber-400 transition-colors">
                     {isCurrent && isPlaying ? (
-                      // Piccola animazione ad onde se sta suonando
                       <div className="flex items-end gap-[2px] h-3">
                         <span className="w-[3px] bg-amber-400 animate-[bounce_1s_infinite_100ms] h-full" />
                         <span className="w-[3px] bg-amber-400 animate-[bounce_1s_infinite_300ms] h-2" />
                         <span className="w-[3px] bg-amber-400 animate-[bounce_1s_infinite_200ms] h-3" />
                       </div>
                     ) : isCurrent ? (
-                      // Icona play ferma se la traccia corrente è in pausa
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                     ) : (
-                      // Numero progressivo per le altre tracce
                       <span>{String(index + 1).padStart(2, '0')}</span>
                     )}
                   </div>
@@ -243,13 +297,13 @@ export default function Player({ tracks = [] }) {
                   {/* Testi della traccia */}
                   <div className="truncate">
                     <p className={`font-medium text-sm truncate ${isCurrent ? 'text-amber-400' : 'text-zinc-200'}`}>
-                      {track.title.replace(/[-_]/g, ' ')}
+                      {track.title}
                     </p>
                     <p className="text-xs text-zinc-500 truncate">{track.artist}</p>
                   </div>
                 </div>
 
-                {/* Badge laterale o indicatore d'ascolto */}
+                {/* Badge laterale */}
                 <div className="text-xs font-mono text-zinc-600 group-hover:text-zinc-400 pl-2">
                   {isCurrent && isPlaying ? 'NOW PLAYING' : 'SELEZIONA'}
                 </div>
