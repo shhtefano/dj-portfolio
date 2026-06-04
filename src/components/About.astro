@@ -1,36 +1,58 @@
 <section id="about" class="section grid lg:grid-cols-2 gap-20 items-center">
-
   <div>
+    <p class="uppercase tracking-[0.3em] text-sm text-zinc-500 mb-4">About</p>
 
-    <p class="uppercase tracking-[0.3em] text-sm text-zinc-500 mb-4">
-      About
-    </p>
+    <h2
+      class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none select-none my-8"
+    >
+      <span
+        class="block bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-[length:200%_auto] animate-text-shimmer bg-clip-text text-transparent pb-2"
+      >
+        Frequenze,
+      </span>
 
-    <h2 class="section-title">
-      Frequenze // <br>
-      \\ Energia <br>
-      Underground //
+      <span
+        class="block bg-gradient-to-r from-amber-400 via-rose-500 to-amber-400 bg-[length:200%_auto] animate-text-shimmer bg-clip-text text-transparent py-2 "
+      >
+        Energia,
+      </span>
+
+      <span
+        class="block bg-gradient-to-r from-violet-400 via-fuchsia-500 to-violet-400 bg-[length:200%_auto] animate-text-shimmer bg-clip-text text-transparent pt-2"
+      >
+        Underground.
+      </span>
     </h2>
 
+    <style>
+      @keyframes textShimmer {
+        0% {
+          bg-position: 0% 50%;
+        }
+        50% {
+          bg-position: 100% 50%;
+        }
+        100% {
+          bg-position: 0% 50%;
+        }
+      }
+
+      .animate-text-shimmer {
+        animation: textShimmer 6s linear infinite;
+      }
+    </style>
+
     <p class="text-zinc-400 text-lg leading-relaxed mb-6">
-      dj shhte is an electronic music artist focused on immersive club experiences,
-      blending deep grooves, melodic textures and cinematic sound design.
+      Il punto d'incontro tra commerciale, pop alternativa ed elettronica
+      movimentata. Groove profondi e sound design cinematografico.
     </p>
-
-    <p class="text-zinc-500 leading-relaxed">
-      Based in Italy, performing in clubs, underground venues and festival environments.
-    </p>
-
   </div>
 
   <div class="relative">
-
     <img
       src="/images/dj.jpg"
       alt="DJ"
       class="rounded-3xl object-cover w-full h-[700px] shadow-2xl"
     />
-
   </div>
-
 </section>
