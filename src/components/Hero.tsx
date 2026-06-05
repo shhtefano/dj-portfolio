@@ -186,24 +186,40 @@ export default function Hero() {
       <div className="absolute w-[600px] h-[600px] bg-blue-500/5 blur-[150px] rounded-full z-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
       {/* TESTI IN PRIMO PIANO */}
+      {/* TESTI E DISCO IN PRIMO PIANO */}
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="relative z-20 text-center px-4 max-w-5xl select-none"
+        className="relative z-20 flex flex-col items-center text-center px-4 max-w-5xl select-none"
       >
+        {/* CONTAINER DEL DISCO VINILE */}
+        <div className="relative group">
+          {/* Effetto bagliore/neon esterno al cerchio che pulsa leggermente */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+          
+          {/* L'immagine che ruota */}
+          <motion.img
+            src="/images/logo_omino.svg"
+            alt="DJ Vinyl"
+            className="relative rounded-full w-[280px] h-[280px] md:w-[320px] md:h-[320px] object-cover border-4 border-white/40 shadow-2xl"
+            animate={{ rotate: 360 }}
+            transition={{
+              repeat: Infinity,
+              duration: 8, // Secondi per fare un giro completo (più basso = più veloce)
+              ease: "linear"
+            }}
+          />
+          
+          {/* Puntino centrale tipico del vinile (opzionale, per dare l'idea del disco) */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-zinc-700 rounded-full z-30 shadow-inner" />
+        </div>
 
-            <img
-      src="/images/logo_graffito.svg"
-      alt="DJ"
-      className="rounded-3xl w-full h-[300px] shadow-2xl"
-    />
-
-
-        <p className="pt-8 text-zinc-400 max-w-xl mx-auto text-base md:text-lg font-light tracking-widest uppercase">
-          Commerciale • House • UKG • Bass • Club Energy
+        <p className="pt-10 text-zinc-400 max-w-xl mx-auto text-base md:text-lg font-light tracking-widest uppercase">
+          • Commerciale • House • Club Music •
         </p>
       </motion.div>
+
 
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />

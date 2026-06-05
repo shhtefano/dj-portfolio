@@ -41,7 +41,6 @@ const getTracksFromFolder = (folderPath: string, subFolderUrl: string): Track[] 
             id: `${subFolderUrl}-${index + 1}`,
             title: title,
             artist: "Shhte",
-            // 2. CORREZIONE URL: adesso punta a /music/Tracks/... o /music/Beats/...
             src: `/music/${subFolderUrl}/${file}` 
           };
         });
@@ -54,11 +53,9 @@ const getTracksFromFolder = (folderPath: string, subFolderUrl: string): Track[] 
   return [];
 };
 
-// 3. Popoliamo le sezioni passando i nomi esatti delle sottocartelle
 tracksData.previews = getTracksFromFolder(prodDir, 'Tracks');
 tracksData.beats = getTracksFromFolder(beatsDir, 'Beats');
 
-// Controllo per il rendering del Player
 const hasTracks = tracksData.previews.length > 0 || tracksData.beats.length > 0;
 ---
 
@@ -67,15 +64,15 @@ const hasTracks = tracksData.previews.length > 0 || tracksData.beats.length > 0;
   <Navbar />
 
   <Hero client:load />
-  
-  {/* Se vedi di nuovo il player significa che i file vengono letti correttamente */}
+
   {hasTracks && <Player tracks={tracksData} client:load />}
 
   <About />
 
+  <Contact />
+
   <Music />
 
-  <Contact />
 
   <Gallery />
 
