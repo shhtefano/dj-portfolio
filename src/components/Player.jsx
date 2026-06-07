@@ -36,46 +36,147 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
   }, [volume, isMuted]);
 
   // 2. EFFECT DI INIZIALIZZAZIONE AUDIO E MANAGEMENT DELLE TRACCE
-  useEffect(() => {
-    // Se la playlist attuale è vuota, non fare nulla
-    if (!currentTrack) return;
+useEffect(() => {
+  if (!currentTrack) return;
 
-    // Se c'è già un audio istanziato in memoria, fermalo prima di sovrascriverlo
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
+  if (audioRef.current) {
+    audioRef.current.pause();
+  }
 
-    audioRef.current = new Audio(currentTrack.src);
-    const audio = audioRef.current;
+  audioRef.current = new Audio(currentTrack.src);
+  const audio = audioRef.current;
 
-    audio.volume = isMuted ? 0 : volume;
+  audio.volume = isMuted ? 0 : volume;
 
-    const onLoadedMetadata = () => setDuration(audio.duration);
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onEnded = () => handleNext();
+  const onLoadedMetadata = () => {
+    setDuration(audio.duration);
+  };
 
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('ended', onEnded);
+  const onTimeUpdate = () => {
+    setCurrentTime(audio.currentTime);
 
-    // Gestione sicura dell'Autoplay richiesta dai browser moderni
-    if (isPlaying) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(err => {
-          console.log("Riproduzione automatica bloccata dal browser. In attesa di interazione.");
-          setIsPlaying(false);
+    // Aggiorna la posizione nella lockscreen
+    if (
+      'mediaSession' in navigator &&
+      navigator.mediaSession.setPositionState
+    ) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: audio.duration || 0,
+          playbackRate: audio.playbackRate,
+          position: audio.currentTime,
         });
+      } catch (err) {
+        console.log(err);
       }
     }
+  };
 
-    return () => {
+  const onEnded = () => {
+    handleNext();
+  };
+
+  audio.addEventListener('loadedmetadata', onLoadedMetadata);
+  audio.addEventListener('timeupdate', onTimeUpdate);
+  audio.addEventListener('ended', onEnded);
+
+  // MEDIA SESSION API
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentTrack.title,
+      artist: currentTrack.artist,
+      album: activeTab === 'beats' ? 'Beats' : 'Tracks',
+
+      // facoltativo: sostituisci con una tua immagine
+      artwork: [
+        {
+          src: '/cover.svg',
+          sizes: '512x512',
+          type: 'image/svg',
+        },
+      ],
+    });
+
+    navigator.mediaSession.playbackState = isPlaying
+      ? 'playing'
+      : 'paused';
+
+    navigator.mediaSession.setActionHandler('play', async () => {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
       audio.pause();
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('timeupdate', onTimeUpdate);
-      audio.removeEventListener('ended', onEnded);
-    };
-  }, [currentTrackIndex, activeTab]); // Re-inizializza l'audio quando cambia traccia OPPURE quando cambia tab
+      setIsPlaying(false);
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      handlePrev();
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      handleNext();
+    });
+
+    navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+      audio.currentTime -= details.seekOffset || 10;
+    });
+
+    navigator.mediaSession.setActionHandler('seekforward', (details) => {
+      audio.currentTime += details.seekOffset || 10;
+    });
+  }
+
+  if (isPlaying) {
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        console.log(
+          'Riproduzione automatica bloccata dal browser.'
+        );
+        setIsPlaying(false);
+      });
+    }
+  }
+
+  return () => {
+    audio.pause();
+
+    audio.removeEventListener(
+      'loadedmetadata',
+      onLoadedMetadata
+    );
+
+    audio.removeEventListener(
+      'timeupdate',
+      onTimeUpdate
+    );
+
+    audio.removeEventListener(
+      'ended',
+      onEnded
+    );
+  };
+}, [
+  currentTrackIndex,
+  activeTab,
+  isPlaying,
+  currentTrack,
+]);
+
+  useEffect(() => {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = isPlaying
+      ? 'playing'
+      : 'paused';
+  }
+}, [isPlaying]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
