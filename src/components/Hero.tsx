@@ -77,7 +77,7 @@ export default function Hero() {
     <section className="relative h-screen w-full overflow-hidden bg-black flex items-center justify-center">
       
       {/* BACKGROUND GRADIENT */}
-<div className="absolute inset-0 bg-gradient-to-b from-slate-750 via-indigo-600 to-fuchsia-800 z-0 opacity-50" />      
+<div className="absolute inset-0 bg-gradient-to-b from-slate-750 via-indigo-600 to-fuchsia-800 z-0 opacity-20" />      
 <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
 
       {/* GLOW AMBIENTALE DIETRO AI TESTI */}
