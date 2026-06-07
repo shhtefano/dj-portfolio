@@ -123,13 +123,6 @@ useEffect(() => {
       handleNext();
     });
 
-    navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-      audio.currentTime -= details.seekOffset || 10;
-    });
-
-    navigator.mediaSession.setActionHandler('seekforward', (details) => {
-      audio.currentTime += details.seekOffset || 10;
-    });
   }
 
   if (isPlaying) {
