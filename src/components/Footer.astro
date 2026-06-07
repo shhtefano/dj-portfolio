@@ -1,0 +1,82 @@
+---
+// src/components/Footer.astro
+const currentYear = new Date().getFullYear();
+
+// Puoi cambiare questa immagine di Unsplash con una tua foto in consolle (es. "/images/my-dj-photo.jpg")
+const footerBgImage = "/images/wallpaper.png";
+
+---
+<footer class="relative bg-black text-white overflow-hidden mt-20 border-t border-zinc-900 font-sans">
+  
+  <div class="absolute inset-0 z-0 opacity-40  bg-center mix-blend-luminosity" style={`background-image: url('${footerBgImage}');`}></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-0"></div>
+
+  <div class="relative z-10 max-w-[1100px] mx-auto px-6 pt-16 pb-8">
+    
+    <div class="flex flex-col md:flex-row items-center justify-between gap-8 mb-16 text-center md:text-left">
+      
+      {/* Big Typo Left */}
+      <div>
+        <img
+          src="/images/logo_white.svg"
+          alt="DJ"
+          class="rounded-3xl h-[80px]">  
+        </img>
+
+      </div>
+
+      {/* Booking / Contact CTA */}
+      <div class="flex flex-col items-center md:items-end gap-2">
+        <span class="text-xs uppercase tracking-widest text-zinc-400">For Bookings & Demos</span>
+        <a 
+          href="mailto:info@shhte.com" 
+          class="text-xl md:text-2xl font-light text-white hover:text-zinc-300 transition-colors underline underline-offset-8 decoration-zinc-700 hover:decoration-white"
+        >
+          djshhtefano@gmail.com
+        </a>
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 border-y border-zinc-800/60 py-8 mb-12 text-center">
+      
+      <a href="https://open.spotify.com/user/hasy64os2sd8yja1v6hz5obob?si=7e06ef4de5764de9" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 rounded-2xl bg-zinc-900/20 border border-zinc-800/30 hover:border-green-500/30 hover:bg-zinc-900/50 transition-all duration-300">
+        <span class="text-xs tracking-widest uppercase text-zinc-500 group-hover:text-green-400 transition-colors">Listen on</span>
+        <span class="text-lg font-bold text-zinc-300 group-hover:text-white mt-1">Spotify</span>
+      </a>
+
+      <a href="https://soundcloud.com/shhtefano" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 rounded-2xl bg-zinc-900/20 border border-zinc-800/30 hover:border-orange-500/30 hover:bg-zinc-900/50 transition-all duration-300">
+        <span class="text-xs tracking-widest uppercase text-zinc-500 group-hover:text-orange-400 transition-colors">Listen on</span>
+        <span class="text-lg font-bold text-zinc-300 group-hover:text-white mt-1">SoundCloud</span>
+      </a>
+
+      <a href="https://instagram.com/shhtefano" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 rounded-2xl bg-zinc-900/20 border border-zinc-800/30 hover:border-pink-500/30 hover:bg-zinc-900/50 transition-all duration-300">
+        <span class="text-xs tracking-widest uppercase text-zinc-500 group-hover:text-pink-400 transition-colors">Follow on</span>
+        <span class="text-lg font-bold text-zinc-300 group-hover:text-white mt-1">Instagram</span>
+      </a>
+
+      <a href="https://github.com/shhtefano" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 rounded-2xl bg-zinc-900/20 border border-zinc-800/30 hover:border-red-500/30 hover:bg-zinc-900/50 transition-all duration-300">
+        <span class="text-xs tracking-widest uppercase text-zinc-500 group-hover:text-red-400 transition-colors">Follow on</span>
+        <span class="text-lg font-bold text-zinc-300 group-hover:text-white mt-1">GitHub</span>
+      </a>
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-600">
+      
+      <div>
+        © {currentYear} SHHTE. All tracks & sets reserved.
+      </div>
+
+      <div class="flex items-center gap-2 px-3 py-1 bg-zinc-900/80 rounded-full border border-zinc-800/50">
+        <span class="relative flex h-1.5 w-1.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+        </span>
+        <span class="tracking-widest uppercase text-[9px] font-semibold text-zinc-400">AUDIO OUT // 44.1kHz</span>
+      </div>
+
+    </div>
+
+  </div>
+</footer>

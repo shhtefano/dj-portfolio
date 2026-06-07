@@ -1,49 +1,54 @@
-<section id="music" class="section">
+<section id="music" class="section px-6 max-w-7xl mx-auto">
+  <div class="mb-8">
+    <p class="uppercase tracking-[0.3em] text-sm text-zinc-500 mb-2">
+      Latest Sets
+    </p>
+    <h2 class="section-title text-4xl font-light tracking-tight text-white">
+      Listen.
+    </h2>
+  </div>
 
-  <p class="uppercase tracking-[0.3em] text-sm text-zinc-500 mb-4">
-    Latest Sets
-  </p>
-
-  <h2 class="section-title">
-    Listen.
-  </h2>
-
-  <!-- <div class="grid lg:grid-cols-2 gap-8 mt-12"> -->
-
-    <div class="bg-zinc-900/50 border border-white/10 rounded-3xl p-8 w-[100%] mx-auto">
-
-      <h3 class="text-2xl font-bold mb-6">
-        Spotify
-      </h3>
-
-        <iframe
-        style="border-radius:12px"
-        src="https://open.spotify.com/embed/playlist/4XP0mEEr4eU9ay00wIuLWn"
+  <!-- Griglia responsiva: 1 colonna su mobile, 3 colonne su schermi grandi -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+    
+    <!-- Card Playlist 1 -->
+    <div class="bg-zinc-900/40 border border-white/5 hover:border-white/10 rounded-3xl p-5 transition-all duration-300 backdrop-blur-sm">
+      <iframe
+        style="border-radius:16px"
+        src="https://open.spotify.com/embed/playlist/4XP0mEEr4eU9ay00wIuLWn?utm_source=generator"
         width="100%"
-        height="652"
+        height="450"
         allowfullscreen=""
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
         loading="lazy"
-        ></iframe>
-
+      ></iframe>
     </div>
 
-    <!-- <div class="bg-zinc-900/50 border border-white/10 rounded-3xl p-6">
-
-      <h3 class="text-2xl font-bold mb-6">
-        SoundCloud
-      </h3>
-
+    <!-- Card Playlist 2 -->
+    <div class="bg-zinc-900/40 border border-white/5 hover:border-white/10 rounded-3xl p-5 transition-all duration-300 backdrop-blur-sm">
       <iframe
+        style="border-radius:16px"
+        src="https://open.spotify.com/embed/playlist/4FTKyMepXXpylSxCSpj8ol?utm_source=generator"
         width="100%"
-        height="352"
-        scrolling="no"
-        frameborder="no"
-        allow="autoplay"
-        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/shhtefano"
-        ></iframe>
-    </div> -->
+        height="450"
+        allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+      ></iframe>
+    </div>
 
-  <!-- </div> -->
+    <!-- Card Playlist 3 -->
+    <div class="bg-zinc-900/40 border border-white/5 hover:border-white/10 rounded-3xl p-5 transition-all duration-300 backdrop-blur-sm">
+      <iframe
+        style="border-radius:16px"
+        src="https://open.spotify.com/embed/playlist/4F8rzGVfSzbdHXXGJJXUuX?utm_source=generator"
+        width="100%"
+        height="450"
+        allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+      ></iframe>
+    </div>
 
+  </div>
 </section>

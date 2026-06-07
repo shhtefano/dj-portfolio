@@ -10,6 +10,7 @@ import Music from "../components/Music.astro";
 import Player from "../components/Player.jsx";
 import Gallery from "../components/Gallery.astro";
 import Contact from "../components/Contact.astro";
+import Footer from "../components/Footer.astro";
 
 interface Track {
   id: string;
@@ -75,5 +76,7 @@ const hasTracks = tracksData.previews.length > 0 || tracksData.beats.length > 0;
 
 
   <Gallery />
+
+  <Footer />
 
 </MainLayout>
