@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function Player({ tracks = { previews: [], beats: [] } }) {
   const [activeTab, setActiveTab] = useState('previews');
-  
+
   // Sincronizziamo l'indice in modo che non vada mai fuori dai limiti della playlist attiva
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false); // Inizializzato a false per gestire l'autoplay via codice in modo pulito
-  
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
@@ -18,7 +18,7 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
 
   // Recuperiamo la lista corrente in base al tab selezionato
   const currentPlaylist = tracks[activeTab] || [];
-  
+
   // Traccia correntemente attiva (con controllo di sicurezza)
   const currentTrack = currentPlaylist[currentTrackIndex] || currentPlaylist[0];
 
@@ -36,140 +36,140 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
   }, [volume, isMuted]);
 
   // 2. EFFECT DI INIZIALIZZAZIONE AUDIO E MANAGEMENT DELLE TRACCE
-useEffect(() => {
-  if (!currentTrack) return;
+  useEffect(() => {
+    if (!currentTrack) return;
 
-  if (audioRef.current) {
-    audioRef.current.pause();
-  }
-
-  audioRef.current = new Audio(currentTrack.src);
-  const audio = audioRef.current;
-
-  audio.volume = isMuted ? 0 : volume;
-
-  const onLoadedMetadata = () => {
-    setDuration(audio.duration);
-  };
-
-  const onTimeUpdate = () => {
-    setCurrentTime(audio.currentTime);
-
-    // Aggiorna la posizione nella lockscreen
-    if (
-      'mediaSession' in navigator &&
-      navigator.mediaSession.setPositionState
-    ) {
-      try {
-        navigator.mediaSession.setPositionState({
-          duration: audio.duration || 0,
-          playbackRate: audio.playbackRate,
-          position: audio.currentTime,
-        });
-      } catch (err) {
-        console.log(err);
-      }
+    if (audioRef.current) {
+      audioRef.current.pause();
     }
-  };
 
-  const onEnded = () => {
-    handleNext();
-  };
+    audioRef.current = new Audio(currentTrack.src);
+    const audio = audioRef.current;
 
-  audio.addEventListener('loadedmetadata', onLoadedMetadata);
-  audio.addEventListener('timeupdate', onTimeUpdate);
-  audio.addEventListener('ended', onEnded);
+    audio.volume = isMuted ? 0 : volume;
 
-  // MEDIA SESSION API
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: currentTrack.title,
-      artist: currentTrack.artist,
-      album: activeTab === 'beats' ? 'Beats' : 'Tracks',
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
 
-      // facoltativo: sostituisci con una tua immagine
-      artwork: [
-        {
-          src: '/cover.svg',
-          sizes: '512x512',
-          type: 'image/svg',
-        },
-      ],
-    });
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
 
-    navigator.mediaSession.playbackState = isPlaying
-      ? 'playing'
-      : 'paused';
-
-    navigator.mediaSession.setActionHandler('play', async () => {
-      try {
-        await audio.play();
-        setIsPlaying(true);
-      } catch (err) {
-        console.log(err);
+      // Aggiorna la posizione nella lockscreen
+      if (
+        'mediaSession' in navigator &&
+        navigator.mediaSession.setPositionState
+      ) {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: audio.duration || 0,
+            playbackRate: audio.playbackRate,
+            position: audio.currentTime,
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
-    });
+    };
 
-    navigator.mediaSession.setActionHandler('pause', () => {
-      audio.pause();
-      setIsPlaying(false);
-    });
-
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-      handlePrev();
-    });
-
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
+    const onEnded = () => {
       handleNext();
-    });
+    };
 
-  }
+    audio.addEventListener('loadedmetadata', onLoadedMetadata);
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('ended', onEnded);
 
-  if (isPlaying) {
-    const playPromise = audio.play();
+    // MEDIA SESSION API
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        album: activeTab === 'beats' ? 'Beats' : 'Tracks',
 
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        console.log(
-          'Riproduzione automatica bloccata dal browser.'
-        );
+        // facoltativo: sostituisci con una tua immagine
+        artwork: [
+          {
+            src: '/cover.svg',
+            sizes: '512x512',
+            type: 'image/svg',
+          },
+        ],
+      });
+
+      navigator.mediaSession.playbackState = isPlaying
+        ? 'playing'
+        : 'paused';
+
+      navigator.mediaSession.setActionHandler('play', async () => {
+        try {
+          await audio.play();
+          setIsPlaying(true);
+        } catch (err) {
+          console.log(err);
+        }
+      });
+
+      navigator.mediaSession.setActionHandler('pause', () => {
+        audio.pause();
         setIsPlaying(false);
       });
+
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        handlePrev();
+      });
+
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        handleNext();
+      });
+
     }
-  }
 
-  return () => {
-    audio.pause();
+    if (isPlaying) {
+      const playPromise = audio.play();
 
-    audio.removeEventListener(
-      'loadedmetadata',
-      onLoadedMetadata
-    );
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          console.log(
+            'Riproduzione automatica bloccata dal browser.'
+          );
+          setIsPlaying(false);
+        });
+      }
+    }
 
-    audio.removeEventListener(
-      'timeupdate',
-      onTimeUpdate
-    );
+    return () => {
+      audio.pause();
 
-    audio.removeEventListener(
-      'ended',
-      onEnded
-    );
-  };
-}, [
-  currentTrackIndex,
-  activeTab,
-  isPlaying,
-  currentTrack,
-]);
+      audio.removeEventListener(
+        'loadedmetadata',
+        onLoadedMetadata
+      );
+
+      audio.removeEventListener(
+        'timeupdate',
+        onTimeUpdate
+      );
+
+      audio.removeEventListener(
+        'ended',
+        onEnded
+      );
+    };
+  }, [
+    currentTrackIndex,
+    activeTab,
+    isPlaying,
+    currentTrack,
+  ]);
 
   useEffect(() => {
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.playbackState = isPlaying
-      ? 'playing'
-      : 'paused';
-  }
-}, [isPlaying]);
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = isPlaying
+        ? 'playing'
+        : 'paused';
+    }
+  }, [isPlaying]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -202,12 +202,12 @@ useEffect(() => {
 
   const handleProgressClick = (e) => {
     if (!progressBarRef.current || !duration || !audioRef.current) return;
-    
+
     const rect = progressBarRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const width = rect.width;
     const newTime = (clickX / width) * duration;
-    
+
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
   };
@@ -240,7 +240,7 @@ useEffect(() => {
   // Interfaccia di Fallback se non ci sono tracce in assoluto
   if (currentPlaylist.length === 0) {
     return (
-      <section className="py-12 bg-zinc-900 text-white max-w-4xl mx-auto my-8 px-4 sm:px-6 rounded-2xl shadow-xl border border-zinc-800">
+      <section className="py-[8rem] px-[2rem] max-w-[1400px] mx-auto bg-zinc-900 text-white rounded-2xl shadow-xl border border-zinc-800">
         {/* Mantiene i Tab visibili così l'utente può comunque switchare sull'altra sezione funzionante */}
         <div className="flex justify-center mb-8">
           <div className="bg-zinc-950 p-1.5 rounded-full border border-zinc-800 flex gap-1 w-full max-w-md">
@@ -256,9 +256,9 @@ useEffect(() => {
   }
 
   return (
-    <section className="py-12 bg-zinc-900 text-white max-w-4xl mx-auto my-8 px-4 sm:px-6 rounded-2xl shadow-xl border border-zinc-800">
-      
-    <div className="text-center mb-6">
+    <section className="py-[4rem] px-[2rem] max-w-[1400px] mx-auto bg-zinc-900 text-white rounded-2xl shadow-xl border border-zinc-800">
+
+      <div className="text-center mb-6">
         <h2 className="text-2xl font-bold tracking-wider uppercase text-amber-400">
           {activeTab === 'previews' ? 'Tracks by Shhte' : 'Prod by Shhte'}
         </h2>
@@ -269,28 +269,26 @@ useEffect(() => {
         <div className="bg-zinc-950 p-1.5 rounded-full border border-zinc-800 flex gap-1 w-full max-w-md">
           <button
             onClick={() => setActiveTab('previews')}
-            className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium tracking-wide uppercase transition-all duration-300 ${
-              activeTab === 'previews'
-                ? 'bg-amber-400 text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-400 hover:text-zinc-200'
-            }`}
+            className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium tracking-wide uppercase transition-all duration-300 ${activeTab === 'previews'
+              ? 'bg-amber-400 text-zinc-950 shadow-md font-bold'
+              : 'text-zinc-400 hover:text-zinc-200'
+              }`}
           >
             Tracks
           </button>
           <button
             onClick={() => setActiveTab('beats')}
-            className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium tracking-wide uppercase transition-all duration-300 ${
-              activeTab === 'beats'
-                ? 'bg-amber-400 text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-400 hover:text-zinc-200'
-            }`}
+            className={`flex-1 py-2.5 px-6 rounded-full text-sm font-medium tracking-wide uppercase transition-all duration-300 ${activeTab === 'beats'
+              ? 'bg-amber-400 text-zinc-950 shadow-md font-bold'
+              : 'text-zinc-400 hover:text-zinc-200'
+              }`}
           >
             Beats
           </button>
         </div>
       </div>
 
-  
+
 
       {/* Info Traccia e Controlli Principali */}
       <div className="bg-zinc-950 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
@@ -306,17 +304,17 @@ useEffect(() => {
           {/* Pulsanti Player */}
           <div className="flex items-center gap-4">
             <button onClick={handlePrev} className="p-2 text-zinc-400 hover:text-white transition-colors" aria-label="Precedente">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" /></svg>
             </button>
             <button onClick={togglePlay} className="p-4 bg-amber-400 text-zinc-950 rounded-full hover:bg-amber-300 transform hover:scale-105 transition-all shadow-lg shadow-amber-400/20" aria-label={isPlaying ? "Pausa" : "Riproduci"}>
               {isPlaying ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
               )}
             </button>
             <button onClick={handleNext} className="p-2 text-zinc-400 hover:text-white transition-colors" aria-label="Prossima">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
             </button>
           </div>
 
@@ -326,14 +324,14 @@ useEffect(() => {
           <div className="flex items-center gap-2 w-full sm:w-32 justify-center sm:justify-start">
             <button onClick={toggleMute} className="text-zinc-400 hover:text-white transition-colors">
               {isMuted || volume === 0 ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z" /></svg>
               ) : volume < 0.4 ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z" /></svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L9 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L9 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
               )}
             </button>
-            <input 
+            <input
               type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange}
               className="w-24 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
               style={{ background: `linear-gradient(to right, #fbbf24 0%, #fbbf24 ${(isMuted ? 0 : volume) * 100}%, #27272a ${(isMuted ? 0 : volume) * 100}%, #27272a 100%)` }}
@@ -366,11 +364,10 @@ useEffect(() => {
               <button
                 key={track.id}
                 onClick={() => handleSelectTrack(index)}
-                className={`w-full text-left p-3 rounded-xl flex items-center justify-between transition-all duration-200 group focus:outline-none ${
-                  isCurrent 
-                    ? 'bg-amber-400/10 border border-amber-400/30 text-amber-400' 
-                    : 'hover:bg-zinc-800/60 text-zinc-300 hover:text-white border border-transparent'
-                }`}
+                className={`w-full text-left p-3 rounded-xl flex items-center justify-between transition-all duration-200 group focus:outline-none ${isCurrent
+                  ? 'bg-amber-400/10 border border-amber-400/30 text-amber-400'
+                  : 'hover:bg-zinc-800/60 text-zinc-300 hover:text-white border border-transparent'
+                  }`}
               >
                 <div className="flex items-center gap-4 truncate">
                   {/* Numero o Icona di Stato */}
@@ -382,12 +379,12 @@ useEffect(() => {
                         <span className="w-[3px] bg-amber-400 animate-[bounce_1s_infinite_200ms] h-3" />
                       </div>
                     ) : isCurrent ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                     ) : (
                       <span>{String(index + 1).padStart(2, '0')}</span>
                     )}
                   </div>
-                  
+
                   {/* Testi della traccia */}
                   <div className="truncate">
                     <p className={`font-medium text-sm truncate ${isCurrent ? 'text-amber-400' : 'text-zinc-200'}`}>
