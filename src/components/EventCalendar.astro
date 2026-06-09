@@ -3,10 +3,10 @@
 // Hardcoded gig data — update as needed
 
 interface Event {
-  date: string;        // ISO format: "YYYY-MM-DD"
+  date: string; // ISO format: "YYYY-MM-DD"
   venue: string;
   city: string;
-  time: string;        // e.g. "23:00"
+  time: string; // e.g. "23:00"
   type: "main" | "support" | "b2b";
   ticketUrl?: string;
 }
@@ -14,13 +14,6 @@ interface Event {
 const events: Event[] = [
   {
     date: "2026-06-21",
-    venue: "Maracaibo",
-    city: "Cava d'aliga",
-    time: "17:00",
-    type: "main"
-  },
-  {
-    date: "2026-07-05",
     venue: "Maracaibo",
     city: "Cava d'aliga",
     time: "17:00",
@@ -34,12 +27,12 @@ const events: Event[] = [
     type: "main",
   },
   {
-    date: "2026-08-02",
+    date: "2026-08-16",
     venue: "Maracaibo",
     city: "Cava d'aliga",
     time: "17:00",
     type: "main",
-  }
+  },
 ];
 
 // Helper to prevent UTC offset issues when parsing "YYYY-MM-DD" dates
@@ -50,7 +43,7 @@ const parseDate = (dateStr: string) => {
 
 // Sort ascending
 const sorted = [...events].sort(
-  (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime()
+  (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime(),
 );
 
 // Group by month label
@@ -69,9 +62,9 @@ const typeLabel: Record<Event["type"], string> = {
 };
 
 const typeColor: Record<Event["type"], string> = {
-  main: "var(--cyan)",
+  main: "var(--purple)",
   support: "var(--orange)",
-  b2b: "var(--purple)",
+  b2b: "var(--cyan)",
 };
 ---
 
@@ -120,7 +113,12 @@ const typeColor: Record<Event["type"], string> = {
 
                   {/* Ticket/Availability (5th column) */}
                   {ev.ticketUrl ? (
-                    <a href={ev.ticketUrl} class="ticket-btn" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={ev.ticketUrl}
+                      class="ticket-btn"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       TICKETS
                     </a>
                   ) : (
@@ -139,15 +137,15 @@ const typeColor: Record<Event["type"], string> = {
 <style>
   /* ── Tokens (mirror your existing site palette) ── */
   :root {
-    --cyan:   #00d4ff;
+    --cyan: #00d4ff;
     --orange: #f5a623;
     --purple: #c86dd7;
-    --white:  #ffffff;
-    --muted:  #6b6b6b;
-    --bg:     #000000;
+    --white: #ffffff;
+    --muted: #6b6b6b;
+    --bg: #000000;
     --border: #1c1c1c;
     --font-display: "Arial Black", "Impact", sans-serif;
-    --font-body:    "Arial", sans-serif;
+    --font-body: "Arial", sans-serif;
   }
 
   /* ── Section shell ── */
@@ -183,7 +181,9 @@ const typeColor: Record<Event["type"], string> = {
   }
 
   @keyframes blink {
-    50% { opacity: 0; }
+    50% {
+      opacity: 0;
+    }
   }
 
   /* ── Month grouping ── */
@@ -195,9 +195,9 @@ const typeColor: Record<Event["type"], string> = {
 
   .month-label {
     font-family: var(--font-body);
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     letter-spacing: 0.2em;
-    color: var(--muted);
+    color: cyan;
     margin: 0 0 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
@@ -245,7 +245,7 @@ const typeColor: Record<Event["type"], string> = {
   }
 
   .day-name {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     letter-spacing: 0.12em;
     color: var(--muted);
     margin-top: 2px;
@@ -305,7 +305,9 @@ const typeColor: Record<Event["type"], string> = {
     text-decoration: none;
     border-radius: 2px;
     white-space: nowrap;
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
   }
 
   .ticket-btn:hover {
