@@ -26,7 +26,7 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
   // Se l'utente cambia sezione, resettiamo l'indice alla prima traccia della nuova lista
   useEffect(() => {
     setCurrentTrackIndex(0);
-    setIsPlaying(true); // Fai partire la riproduzione della nuova sezione in automatico
+    setIsPlaying(false); // Fai partire la riproduzione della nuova sezione in automatico
   }, [activeTab]);
 
   useEffect(() => {

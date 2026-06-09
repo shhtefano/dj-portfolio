@@ -11,6 +11,7 @@ import Player from "../components/Player.jsx";
 import Gallery from "../components/Gallery.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
+import EventCalendar from "../components/EventCalendar.astro";
 
 interface Track {
   id: string;
@@ -66,14 +67,15 @@ const hasTracks = tracksData.previews.length > 0 || tracksData.beats.length > 0;
 
   <Hero client:load />
 
-  {hasTracks && <Player tracks={tracksData} client:load />}
-
+  
   <About />
-
+  
+  <EventCalendar/>
   <Contact />
-
+  
+  {hasTracks && <Player tracks={tracksData} client:load />}
+  
   <Music />
-
 
   <Gallery />
 
