@@ -1,7 +1,4 @@
 ---
-// EventCalendar.astro
-// Hardcoded gig data — update as needed
-
 interface Event {
   date: string; // ISO format: "YYYY-MM-DD"
   venue: string;
@@ -30,6 +27,13 @@ const events: Event[] = [
     date: "2026-08-16",
     venue: "Maracaibo",
     city: "Cava d'aliga",
+    time: "17:00",
+    type: "main",
+  },
+  {
+    date: "2026-07-26",
+    venue: "Thyme",
+    city: "Randello",
     time: "17:00",
     type: "main",
   },
@@ -153,7 +157,7 @@ const typeColor: Record<Event["type"], string> = {
     background: var(--bg);
     color: var(--white);
     padding: 8rem 2rem;
-    max-width: 1400px;
+    max-width: 1000px;
     margin: 0 auto;
   }
 
