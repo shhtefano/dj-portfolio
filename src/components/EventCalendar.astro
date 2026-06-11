@@ -17,6 +17,13 @@ const events: Event[] = [
     type: "main",
   },
   {
+    date: "2026-07-05",
+    venue: "Maracaibo",
+    city: "Cava d'aliga",
+    time: "17:00",
+    type: "main",
+  },
+  {
     date: "2026-07-19",
     venue: "Maracaibo",
     city: "Cava d'aliga",
@@ -24,7 +31,7 @@ const events: Event[] = [
     type: "main",
   },
   {
-    date: "2026-08-16",
+    date: "2026-08-02",
     venue: "Maracaibo",
     city: "Cava d'aliga",
     time: "17:00",
@@ -39,18 +46,15 @@ const events: Event[] = [
   },
 ];
 
-// Helper to prevent UTC offset issues when parsing "YYYY-MM-DD" dates
 const parseDate = (dateStr: string) => {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day);
 };
 
-// Sort ascending
 const sorted = [...events].sort(
   (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime(),
 );
 
-// Group by month label
 const grouped: Record<string, Event[]> = {};
 for (const ev of sorted) {
   const d = parseDate(ev.date);
@@ -68,13 +72,12 @@ const typeLabel: Record<Event["type"], string> = {
 const typeColor: Record<Event["type"], string> = {
   main: "var(--purple)",
   support: "var(--orange)",
-  b2b: "var(--cyan)",
+  b2b: "var(--purple)",
 };
 ---
 
 <section class="calendar" id="dates">
-  <p class="eyebrow">DATES</p>
-  <h2 class="section-title">LIVE.<span class="dot">_</span></h2>
+  <h2 class="section-title">CALENDARIO<span class="dot">_</span></h2>
 
   <div class="months">
     {
@@ -90,44 +93,47 @@ const typeColor: Record<Event["type"], string> = {
                 .toUpperCase();
               return (
                 <li class="event-row">
-                  {/* Date block */}
-                  <div class="date-block">
-                    <span class="day-num">{dayNum}</span>
-                    <span class="day-name">{dayName}</span>
+                  {/* Blocco Data (Colonna Sinistra fissa) */}
+                  <div class="date-side">
+                    <div class="date-block">
+                      <span class="day-num">{dayNum}</span>
+                      <span class="day-name">{dayName}</span>
+                    </div>
+                    <div class="divider mr-8" />
                   </div>
 
-                  {/* Divider line */}
-                  <div class="divider" />
+                  {/* Blocco Contenuto Informativo (Allineamento Geometrico) */}
+                  <div class="content-side">
+                    <div class="event-info">
+                      <span class="venue">{ev.venue}</span>
+                      <span class="city-time">
+                        {ev.city} &mdash; {ev.time}
+                      </span>
+                    </div>
 
-                  {/* Info */}
-                  <div class="event-info">
-                    <span class="venue">{ev.venue}</span>
-                    <span class="city-time">
-                      {ev.city} &mdash; {ev.time}
-                    </span>
+                    {/* Badge e Azioni (Sempre affiancati) */}
+                    <div class="event-actions">
+                      <span
+                        class="type-badge"
+                        style={`color: ${typeColor[ev.type]}; border-color: ${typeColor[ev.type]};`}
+                      >
+                        {typeLabel[ev.type]}
+                      </span>
+
+                      {ev.ticketUrl ? (
+                        <a
+                          href={ev.ticketUrl}
+                          class="ticket-btn"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          TICKETS
+                        </a>
+                      ) : (
+                        <span class="sold-out">FREE</span>
+                      )}
+                    </div>
                   </div>
-
-                  {/* Type badge */}
-                  <span
-                    class="type-badge"
-                    style={`color: ${typeColor[ev.type]}; border-color: ${typeColor[ev.type]};`}
-                  >
-                    {typeLabel[ev.type]}
-                  </span>
-
-                  {/* Ticket/Availability (5th column) */}
-                  {ev.ticketUrl ? (
-                    <a
-                      href={ev.ticketUrl}
-                      class="ticket-btn"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      TICKETS
-                    </a>
-                  ) : (
-                    <span class="sold-out">FREE</span>
-                  )}
                 </li>
               );
             })}
@@ -139,7 +145,7 @@ const typeColor: Record<Event["type"], string> = {
 </section>
 
 <style>
-  /* ── Tokens (mirror your existing site palette) ── */
+  /* ── Palette & Tokens ── */
   :root {
     --cyan: #00d4ff;
     --orange: #f5a623;
@@ -152,12 +158,12 @@ const typeColor: Record<Event["type"], string> = {
     --font-body: "Arial", sans-serif;
   }
 
-  /* ── Section shell ── */
+  /* ── Layout Contenitore ── */
   .calendar {
     background: var(--bg);
     color: var(--white);
-    padding: 8rem 2rem;
-    max-width: 1000px;
+    padding: 6rem 2rem;
+    max-width: 900px;
     margin: 0 auto;
   }
 
@@ -176,11 +182,10 @@ const typeColor: Record<Event["type"], string> = {
     letter-spacing: -0.02em;
     margin: 0 0 3.5rem;
     text-transform: uppercase;
-    color: var(--white);
   }
 
   .dot {
-    color: var(--cyan);
+    color: var(--purple);
     animation: blink 1.1s step-end infinite;
   }
 
@@ -190,7 +195,6 @@ const typeColor: Record<Event["type"], string> = {
     }
   }
 
-  /* ── Month grouping ── */
   .months {
     display: flex;
     flex-direction: column;
@@ -199,150 +203,174 @@ const typeColor: Record<Event["type"], string> = {
 
   .month-label {
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     letter-spacing: 0.2em;
-    color: cyan;
+    color: var(--muted);
     margin: 0 0 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
   }
 
-  /* ── Event rows ── */
   .event-list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0;
   }
 
+  /* ── Struttura Riga (Desktop Layout) ── */
   .event-row {
-    display: grid;
-    grid-template-columns: 3.5rem 1px 1fr auto auto;
+    display: flex;
     align-items: center;
-    gap: 1.25rem;
-    padding: 1rem 0;
+    justify-content: space-between;
+    padding: 1.25rem 0;
     border-bottom: 1px solid var(--border);
     transition: background 0.18s ease;
-    cursor: default;
   }
 
   .event-row:hover {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
   }
 
-  /* Date block */
+  /* Blocco Sinistro: Data + Linea */
+  .date-side {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+  }
+
   .date-block {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 4.5rem;
     line-height: 1;
   }
 
   .day-num {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     font-weight: 900;
-    color: var(--white);
   }
 
   .day-name {
-    font-size: 0.7rem;
+    font-size: 1rem;
     letter-spacing: 0.12em;
     color: var(--muted);
-    margin-top: 2px;
+    margin-top: 4px;
   }
 
-  /* Divider */
   .divider {
     width: 1px;
     height: 2.2rem;
     background: var(--border);
-    flex-shrink: 0;
   }
 
-  /* Event info */
+  /* Blocco Destro: Info a sinistra, Azioni a destra */
+  .content-side {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-left: 0.5rem;
+  }
+
   .event-info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.25rem;
   }
 
   .venue {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--white);
+    letter-spacing: 0.02em;
   }
 
   .city-time {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--muted);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
   }
 
-  /* Type badge */
+  /* Wrapper Azioni (Badge + Bottone) */
+  .event-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
   .type-badge {
     font-size: 0.6rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     border: 1px solid;
     border-radius: 2px;
-    padding: 0.2em 0.55em;
+    padding: 0.25em 0.6rem;
     text-transform: uppercase;
     white-space: nowrap;
+    line-height: 1;
   }
 
-  /* Ticket button */
   .ticket-btn {
     font-family: var(--font-display);
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 900;
     letter-spacing: 0.1em;
     color: var(--bg);
     background: var(--cyan);
-    padding: 0.4em 0.85em;
+    padding: 0.45em 0.9em;
     text-decoration: none;
     border-radius: 2px;
     white-space: nowrap;
-    transition:
-      opacity 0.15s ease,
-      transform 0.15s ease;
+    transition: opacity 0.15s ease;
   }
 
   .ticket-btn:hover {
     opacity: 0.85;
-    transform: translateY(-1px);
   }
 
   .sold-out {
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
     color: var(--muted);
     white-space: nowrap;
+    font-weight: 700;
   }
 
-  /* ── Responsive ── */
+  /* ── RIPRISTINO TOTALE MOBILE (Sotto i 600px) ── */
   @media (max-width: 600px) {
     .event-row {
-      grid-template-columns: 3rem 1px 1fr;
-      grid-template-rows: auto auto;
-      row-gap: 0.5rem;
+      align-items: flex-start; /* Allinea in alto rispetto alla data */
+      padding: 1.25rem 0.5rem;
     }
 
-    .type-badge,
-    .ticket-btn,
-    .sold-out {
-      grid-column: 3;
+    /* Forza il contenuto principale a scendere in colonna perfettamente squadrato */
+    .content-side {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0.65rem; /* Distanza matematica fissa */
+      padding-left: 0;
     }
 
-    .ticket-btn {
-      display: inline-block;
-      width: fit-content;
+    .event-info {
+      align-items: flex-start;
+    }
+
+    /* L'allineamento orizzontale millimetrico che cercavi */
+    .event-actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.75rem; /* Spazio pulito e ridotto tra MAIN e FREE */
+      width: 100%;
     }
   }
 </style>
