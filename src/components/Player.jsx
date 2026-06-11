@@ -75,7 +75,6 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
   }, [activeTab]);
 
   // 3. CAMBIO TRACCIA E MEDIA SESSION API
-  // 3. CAMBIO TRACCIA E MEDIA SESSION API
   useEffect(() => {
     if (!audioRef.current || !currentTrack) return;
 
@@ -91,25 +90,14 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentTrack.title,
         artist: currentTrack.artist,
-        album: activeTab === 'beats' ? 'Beats Ledger' : 'Tracks Archive',
-        artwork: [
-          { src: getMediaSessionArtwork(currentTrack), sizes: '512x512', type: 'image/jpeg' }
-        ]
+        album: activeTab === 'beats' ? 'Beats' : 'Tracks',
+        artwork: [{ src: getCoverSrc(currentTrack), sizes: '200x200', type: 'image/jpeg' }]
       });
 
-      // Configura i comandi fisici/lockscreen
-      navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
-      navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
+      navigator.mediaSession.setActionHandler('play', togglePlay);
+      navigator.mediaSession.setActionHandler('pause', togglePlay);
       navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
       navigator.mediaSession.setActionHandler('nexttrack', handleNext);
-
-      // Consente all'utente di skippare i secondi dalla lockscreen (Timeline trascinabile)
-      navigator.mediaSession.setActionHandler('seekto', (details) => {
-        if (audioRef.current && details.seekTime) {
-          audioRef.current.currentTime = details.seekTime;
-          setCurrentTime(details.seekTime);
-        }
-      });
     }
 
     return () => {
@@ -118,10 +106,9 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
         navigator.mediaSession.setActionHandler('pause', null);
         navigator.mediaSession.setActionHandler('previoustrack', null);
         navigator.mediaSession.setActionHandler('nexttrack', null);
-        navigator.mediaSession.setActionHandler('seekto', null);
       }
     };
-  }, [currentTrackIndex, activeTab, currentTrack, handleNext, handlePrev]);
+  }, [currentTrackIndex, activeTab, currentTrack, isPlaying, handleNext, handlePrev, togglePlay]);
 
   // 4. SINCRONIZZAZIONE PLAY/PAUSE
   useEffect(() => {
@@ -184,16 +171,7 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  // 5.5 AGGIORNAMENTO DELLA TIMELINE SULLA LOCKSCREEN DEL TELEFONO
-  useEffect(() => {
-    if ('mediaSession' in navigator && audioRef.current && duration > 0) {
-      navigator.mediaSession.setPositionState({
-        duration: duration,
-        playbackRate: audioRef.current.playbackRate || 1.0,
-        position: currentTime
-      });
-    }
-  }, [currentTime, duration]);
+
 
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
 
@@ -227,15 +205,6 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
       </section>
     );
   }
-
-  const getMediaSessionArtwork = (track) => {
-    if (!track || !track.src) return 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=500&auto=format&fit=crop';
-
-    const audioFilename = track.src.split('/').pop().replace(/\.[^/.]+$/, "");
-    // Se hai una versione .jpg o .png delle tue cover, usala qui. 
-    // Altrimenti, usa il fallback Unsplash/URL assoluto per testare se il telefono non legge gli .svg
-    return `/images/covers/${audioFilename}.jpg`;
-  };
 
   return (
     <section className="py-[4rem] px-[2rem] max-w-[1200px] mx-auto bg-zinc-950 text-white rounded-2xl border border-white/5 mt-20 shadow-2xl">
