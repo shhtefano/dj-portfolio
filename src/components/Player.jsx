@@ -18,15 +18,16 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
 
   // FUNZIONE HELPER: Genera il percorso della cover basandosi sul file audio
   const getCoverSrc = (track) => {
-    if (!track || !track.src) return '/images/cover/default.jpg';
+    // if (!track || !track.src) return '/images/cover/default.jpg';
 
     // Estrae il nome del file eliminando il percorso iniziale e l'estensione .mp3
     // Esempio: "/audio/mia-traccia.mp3" diventa "mia-traccia"
-    const audioFilename = track.src.split('/').pop().replace(/\.[^/.]+$/, "");
+    // const audioFilename = track.src.split('/').pop().replace(/\.[^/.]+$/, "");
 
     // Ritorna il percorso puntando alla cartella corretta (cover al singolare) con estensione .jpg
     // Se usi i .png, sostituisci .jpg con .png qui sotto
-    return `/images/covers/${audioFilename}.svg`;
+    // return `/images/covers/${audioFilename}.svg`;
+    return `/images/covers/cover_default.svg`;
   };
 
   const handleNext = useCallback(() => {
@@ -177,25 +178,13 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
 
 
   useEffect(() => {
-    let intervalId;
-
     if (isPlaying && currentTrack) {
-      // Array di emoji che simulano la rotazione del disco o le tacche che girano
-      const spinFrames = ['💿', '📀', '🎵', '🎶'];
-      let frameIndex = 0;
-
-      intervalId = setInterval(() => {
-        document.title = `${spinFrames[frameIndex]} ${currentTrack.title}`;
-        frameIndex = (frameIndex + 1) % spinFrames.length;
-      }, 500); // Cambia frame ogni 500ms
+      document.title = `${currentTrack.title}`;
     } else if (currentTrack) {
       document.title = `⏸️ Pausa: ${currentTrack.title}`;
     } else {
-      document.title = "Audio Player";
+      document.title = "Shhte";
     }
-
-    // Ripristina il titolo quando il componente si smonta o cambia traccia
-    return () => clearInterval(intervalId);
   }, [isPlaying, currentTrack]);
 
   if (currentPlaylist.length === 0) {

@@ -1,50 +1,80 @@
 <nav
-  class="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/30 border-b border-white/5"
+  class="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/5 h-20 flex items-center"
 >
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex">
-      <img src="/images/logo_white.svg" alt="DJ" class="rounded-3xl h-[80px]" />
-    </div>
+  <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+    <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
+      <img
+        src="/images/logo_viola.svg"
+        alt="DJ"
+        class="h-12 w-auto object-contain"
+      />
+    </a>
 
     <button
       id="menu-toggle"
-      class="flex flex-col gap-1.5 z-50 md:hidden focus:outline-none"
+      class="flex flex-col gap-1.5 z-50 md:hidden focus:outline-none p-2"
       aria-label="Toggle Menu"
     >
-      <span
-        class="w-6 h-0.5 bg-white transition-transform duration-300 id-line1"
+      <span class="w-6 h-0.5 bg-white transition-all duration-300 id-line1"
       ></span>
-      <span class="w-6 h-0.5 bg-white transition-opacity duration-300 id-line2"
+      <span class="w-6 h-0.5 bg-white transition-all duration-300 id-line2"
       ></span>
-      <span
-        class="w-6 h-0.5 bg-white transition-transform duration-300 id-line3"
+      <span class="w-6 h-0.5 bg-white transition-all duration-300 id-line3"
       ></span>
     </button>
 
     <div
-      class="hidden md:flex gap-8 text-sm uppercase tracking-wider text-zinc-300"
+      class="hidden md:flex gap-8 text-sm uppercase tracking-wider text-zinc-300 items-center"
     >
       <a href="#about" class="hover:text-white transition">About</a>
       <a href="#contact" class="hover:text-white transition">Contact</a>
       <a href="#music" class="hover:text-white transition">Music</a>
       <a href="#gallery" class="hover:text-white transition">Gallery</a>
-    </div>
-
-    <div
-      id="mobile-menu"
-      class="fixed inset-0 bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 text-xl uppercase tracking-widest text-zinc-300 opacity-0 pointer-events-none transition-all duration-300 md:hidden mt-40"
-    >
-      <a href="#about" class="mobile-link hover:text-white transition">About</a>
-      <a href="#contact" class="mobile-link hover:text-white transition"
-        >Contact</a
-      >
-      <a href="#music" class="mobile-link hover:text-white transition">Music</a>
-      <a href="#gallery" class="mobile-link hover:text-white transition"
-        >Gallery</a
-      >
+      <img
+        src="/images/logo_omino.svg"
+        alt="DJ"
+        class="h-12 w-12 rounded-full border border-white/10 object-cover"
+      />
     </div>
   </div>
 </nav>
+
+<div
+  id="mobile-menu"
+  class="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center gap-8 text-xl uppercase tracking-widest text-zinc-300 opacity-0 pointer-events-none transition-all duration-300 md:hidden z-40"
+>
+  <div class="pt-12 flex flex-col items-center gap-8 w-full">
+    <a
+      href="#about"
+      class="mobile-link hover:text-white transition-colors duration-200"
+      >About</a
+    >
+    <a
+      href="#contact"
+      class="mobile-link hover:text-white transition-colors duration-200"
+      >Contatti</a
+    >
+    <a
+      href="#music"
+      class="mobile-link hover:text-white transition-colors duration-200"
+      >Playlist</a
+    >
+    <a
+      href="#gallery"
+      class="mobile-link hover:text-white transition-colors duration-200"
+      >Galleria</a
+    >
+
+    <div class="mt-4 flex justify-center">
+      <img
+        src="/images/logo_omino.svg"
+        alt="DJ Logo"
+        class="h-44 w-auto object-contain opacity-90"
+      />
+    </div>
+    <p class="text-xs text-zinc-400">Created by Shhte &copy</p>
+  </div>
+</div>
 
 <script>
   const menuToggle = document.getElementById("menu-toggle");
