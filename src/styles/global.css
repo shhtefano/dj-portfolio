@@ -39,3 +39,19 @@ body {
   font-family: "Covered By Your Grace", cursive;
   font-weight: 100;
 }
+
+@keyframes glow {
+
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+
+  50% {
+    filter: brightness(1.5);
+  }
+}
+
+.logo-glow {
+  animation: glow 3s ease-in-out infinite;
+}

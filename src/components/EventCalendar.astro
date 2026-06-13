@@ -77,9 +77,9 @@ const typeColor: Record<Event["type"], string> = {
 ---
 
 <section class="calendar" id="dates">
-  <h2 class="section-title">CALENDARIO<span class="dot">_</span></h2>
+  <h2 class="section-title md:px-34">CALENDARIO<span class="dot">_</span></h2>
 
-  <div class="months">
+  <div class="months md:px-34 xs:p-0">
     {
       Object.entries(grouped).map(([month, evs]) => (
         <div class="month-block">
@@ -162,9 +162,8 @@ const typeColor: Record<Event["type"], string> = {
   .calendar {
     background: var(--bg);
     color: var(--white);
-    padding: 6rem 2rem;
-    max-width: 900px;
-    margin: 0 auto;
+    padding: 12rem 2rem 2rem 2rem;
+    width: 100%;
   }
 
   .eyebrow {
