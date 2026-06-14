@@ -149,7 +149,7 @@ const typeColor: Record<Event["type"], string> = {
   :root {
     --cyan: #00d4ff;
     --orange: #f5a623;
-    --purple: #c86dd7;
+    --purple: #8f00ff;
     --white: #ffffff;
     --muted: #6b6b6b;
     --bg: #000000;
@@ -204,7 +204,8 @@ const typeColor: Record<Event["type"], string> = {
     font-family: var(--font-body);
     font-size: 0.7rem;
     letter-spacing: 0.2em;
-    color: var(--muted);
+    color: white;
+    font-weight: 500;
     margin: 0 0 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
@@ -252,12 +253,12 @@ const typeColor: Record<Event["type"], string> = {
     font-family: var(--font-display);
     font-size: 2.5rem;
     font-weight: 900;
+    color: #6c00b4;
   }
 
   .day-name {
     font-size: 1rem;
     letter-spacing: 0.12em;
-    color: var(--muted);
     margin-top: 4px;
   }
 

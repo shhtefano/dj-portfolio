@@ -179,12 +179,13 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
 
   useEffect(() => {
     if (isPlaying && currentTrack) {
-      document.title = `${currentTrack.title}`;
-    } else if (currentTrack) {
-      document.title = `⏸️ Pausa: ${currentTrack.title}`;
+      document.title = currentTrack.title;
     } else {
       document.title = "Shhte";
     }
+    return () => {
+      document.title = "Shhte";
+    };
   }, [isPlaying, currentTrack]);
 
   if (currentPlaylist.length === 0) {
@@ -286,7 +287,7 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
             <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-500 px-1">
               Index / Queued ({currentPlaylist.length})
             </h4>
-            <div className="space-y-1 max-h-[290px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800">
+            <div className="space-y-1 max-h-[260px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800">
               {currentPlaylist.map((track, index) => {
                 const isCurrent = index === currentTrackIndex;
                 return (
