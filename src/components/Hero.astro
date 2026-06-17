@@ -5,15 +5,28 @@
 <section class="relative h-screen w-full overflow-hidden">
   <!-- Contenitore Centrale Principale -->
   <div class="absolute inset-0 w-full h-full">
-    <picture class="block w-full h-full">
+    <!-- Dark Theme Wallpaper -->
+    <picture class="theme-dark-only block w-full h-full">
       <source
         media="(max-width:768px)"
         srcset="images/wallpaper_vertical.png"
         class="w-full h-full object-cover scale-90"
       />
-
       <img
         src="images/wallpaper_invert.png"
+        class="w-full h-full object-cover"
+      />
+    </picture>
+
+    <!-- Light Theme Wallpaper -->
+    <picture class="theme-light-only block w-full h-full">
+      <source
+        media="(max-width:768px)"
+        srcset="images/wallpaper_vertical_2.png"
+        class="w-full h-full object-cover scale-90"
+      />
+      <img
+        src="images/wallpaper_inverted.png"
         class="w-full h-full object-cover"
       />
     </picture>
@@ -21,7 +34,7 @@
 
   <!-- Footer Info / Scroll Indicator -->
   <div
-    class="absolute bottom-8 left-0 w-full px-8 md:px-16 flex justify-between items-center z-10 text-[10px] font-mono tracking-widest text-zinc-600 hidden sm:flex"
+    class="hero-footer absolute bottom-8 left-0 w-full px-8 md:px-16 flex justify-between items-center z-10 text-[10px] font-mono tracking-widest text-zinc-600 hidden sm:flex"
   >
     <div class="text-white">[ 45.4642° N, 9.1900° E ]</div>
     <div class="flex items-center gap-2">

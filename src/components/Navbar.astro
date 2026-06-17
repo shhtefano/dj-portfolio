@@ -4,11 +4,57 @@
   <div class="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
     <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
       <img
-        src="/images/logo_viola.svg"
+        src="/images/logo_elegant.png"
         alt="DJ"
-        class="h-12 w-auto object-contain animate-pulse"
+        class="logo-dark-theme h-12 w-auto object-contain animate-pulse"
+      />
+      <img
+        src="/images/logo_elegant_dark.png"
+        alt="DJ"
+        class="logo-light-theme h-12 w-auto object-contain animate-pulse"
       />
     </a>
+
+    <button
+      id="theme-toggle-mobile"
+      class="text-zinc-300 hover:text-white transition focus:outline-none cursor-pointer p-2 md:hidden z-50 mr-2"
+      aria-label="Toggle Theme"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        id="theme-toggle-sun-mobile"
+        class="h-5 w-5 hidden"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="m4.93 4.93 1.41 1.41"></path>
+        <path d="m17.66 17.66 1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="m6.34 17.66-1.41 1.41"></path>
+        <path d="m19.07 4.93-1.41 1.41"></path>
+      </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        id="theme-toggle-moon-mobile"
+        class="h-5 w-5 hidden"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+      </svg>
+    </button>
 
     <button
       id="menu-toggle"
@@ -30,6 +76,48 @@
       <a href="#contact" class="hover:text-white transition">Contact</a>
       <a href="#music" class="hover:text-white transition">Music</a>
       <a href="#gallery" class="hover:text-white transition">Gallery</a>
+
+      <button
+        id="theme-toggle"
+        class="text-zinc-300 hover:text-white transition focus:outline-none cursor-pointer p-1"
+        aria-label="Toggle Theme"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          id="theme-toggle-sun"
+          class="h-5 w-5 hidden"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2"></path>
+          <path d="M12 20v2"></path>
+          <path d="m4.93 4.93 1.41 1.41"></path>
+          <path d="m17.66 17.66 1.41 1.41"></path>
+          <path d="M2 12h2"></path>
+          <path d="M20 12h2"></path>
+          <path d="m6.34 17.66-1.41 1.41"></path>
+          <path d="m19.07 4.93-1.41 1.41"></path>
+        </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          id="theme-toggle-moon"
+          class="h-5 w-5 hidden"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+      </button>
+
       <img
         src="/images/logo_omino.svg"
         alt="DJ"
@@ -97,4 +185,42 @@
 
   menuToggle?.addEventListener("click", toggleMenu);
   mobileLinks.forEach((link) => link.addEventListener("click", toggleMenu));
+
+  // Gestione tema
+  const sunIcons = document.querySelectorAll(
+    "#theme-toggle-sun, #theme-toggle-sun-mobile",
+  );
+  const moonIcons = document.querySelectorAll(
+    "#theme-toggle-moon, #theme-toggle-moon-mobile",
+  );
+  const themeToggles = document.querySelectorAll(
+    "#theme-toggle, #theme-toggle-mobile",
+  );
+
+  function updateIcons(currentTheme: string) {
+    if (currentTheme === "light") {
+      sunIcons.forEach((icon) => icon.classList.add("hidden"));
+      moonIcons.forEach((icon) => icon.classList.remove("hidden"));
+    } else {
+      sunIcons.forEach((icon) => icon.classList.remove("hidden"));
+      moonIcons.forEach((icon) => icon.classList.add("hidden"));
+    }
+  }
+
+  // Inizializza icone
+  const initialTheme =
+    document.documentElement.getAttribute("data-theme") || "dark";
+  updateIcons(initialTheme);
+
+  themeToggles.forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      const currentTheme =
+        document.documentElement.getAttribute("data-theme") || "dark";
+      const nextTheme = currentTheme === "light" ? "dark" : "light";
+
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      localStorage.setItem("theme", nextTheme);
+      updateIcons(nextTheme);
+    });
+  });
 </script>

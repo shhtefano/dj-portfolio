@@ -6,22 +6,21 @@ interface Event {
   time: string; // e.g. "23:00"
   type: "main" | "support" | "b2b";
   ticketUrl?: string;
+  address?: string;
+  websiteUrl?: string;
+  mapsUrl?: string;
 }
 
 const events: Event[] = [
-  {
-    date: "2026-06-21",
-    venue: "Maracaibo",
-    city: "Cava d'aliga",
-    time: "17:00",
-    type: "main",
-  },
   {
     date: "2026-07-05",
     venue: "Maracaibo",
     city: "Cava d'aliga",
     time: "17:00",
     type: "main",
+    address: "Viale della Pace, Cava d'Aliga ",
+    websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
+    mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
   },
   {
     date: "2026-07-19",
@@ -29,6 +28,9 @@ const events: Event[] = [
     city: "Cava d'aliga",
     time: "17:00",
     type: "main",
+    address: "Viale della Pace, Cava d'Aliga",
+    websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
+    mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
   },
   {
     date: "2026-08-02",
@@ -36,6 +38,9 @@ const events: Event[] = [
     city: "Cava d'aliga",
     time: "17:00",
     type: "main",
+    address: "Viale della Pace, Cava d'Aliga",
+    websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
+    mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
   },
   {
     date: "2026-07-26",
@@ -43,6 +48,9 @@ const events: Event[] = [
     city: "Randello",
     time: "17:00",
     type: "main",
+    address: "SP85, Ragusa",
+    websiteUrl: "https://thymerandello.example.com",
+    mapsUrl: "https://maps.google.com/?q=Thyme+Randello",
   },
 ];
 
@@ -111,6 +119,62 @@ const typeColor: Record<Event["type"], string> = {
                       </span>
                     </div>
 
+                    <div class="event-address">
+                      {ev.address && (
+                        <span class="address-text">{ev.address}</span>
+                      )}
+                      {ev.mapsUrl && (
+                        <a
+                          href={ev.mapsUrl}
+                          class="maps-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Open in Google Maps"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="maps-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="3" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+
+                    <div class="event-website">
+                      {ev.websiteUrl && (
+                        <a
+                          href={ev.websiteUrl}
+                          class="website-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          WEBSITE
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="web-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path d="M15 3h6v6" />
+                            <path d="M10 14 21 3" />
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+
                     {/* Badge e Azioni (Sempre affiancati) */}
                     <div class="event-actions">
                       <span
@@ -147,7 +211,6 @@ const typeColor: Record<Event["type"], string> = {
 <style>
   /* ── Palette & Tokens ── */
   :root {
-    --cyan: #00d4ff;
     --orange: #f5a623;
     --purple: #8f00ff;
     --white: #ffffff;
@@ -202,13 +265,13 @@ const typeColor: Record<Event["type"], string> = {
 
   .month-label {
     font-family: var(--font-body);
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     letter-spacing: 0.2em;
     color: white;
     font-weight: 500;
-    margin: 0 0 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
+    padding-left: 0.7rem;
+    font-style: bold;
+    /* border-bottom: 1px solid var(--border); */
   }
 
   .event-list {
@@ -270,11 +333,11 @@ const typeColor: Record<Event["type"], string> = {
 
   /* Blocco Destro: Info a sinistra, Azioni a destra */
   .content-side {
-    display: flex;
-    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1.8fr 2.2fr 1.2fr 1.8fr;
     align-items: center;
-    justify-content: space-between;
     gap: 1.5rem;
+    flex-grow: 1;
     padding-left: 0.5rem;
   }
 
@@ -294,8 +357,77 @@ const typeColor: Record<Event["type"], string> = {
 
   .city-time {
     font-size: 0.75rem;
+    color: #c7c7c7;
+    letter-spacing: 0.05em;
+  }
+
+  .event-address {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
     color: var(--muted);
     letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .address-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .maps-link {
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      color 0.15s ease,
+      transform 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .maps-link:hover {
+    color: var(--purple);
+    transform: translateY(-1px);
+  }
+
+  .maps-icon {
+    width: 0.7rem;
+    height: 0.7rem;
+  }
+
+  .event-website {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .website-link {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--white);
+    text-decoration: underline;
+    letter-spacing: 0.1em;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .website-link:hover {
+    color: var(--purple);
+  }
+
+  .web-icon {
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-left: 0.25rem;
+    display: inline-block;
+    vertical-align: middle;
   }
 
   /* Wrapper Azioni (Badge + Bottone) */
@@ -324,7 +456,7 @@ const typeColor: Record<Event["type"], string> = {
     font-weight: 900;
     letter-spacing: 0.1em;
     color: var(--bg);
-    background: var(--cyan);
+    background: var(--purple);
     padding: 0.45em 0.9em;
     text-decoration: none;
     border-radius: 2px;
@@ -353,6 +485,7 @@ const typeColor: Record<Event["type"], string> = {
 
     /* Forza il contenuto principale a scendere in colonna perfettamente squadrato */
     .content-side {
+      display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
@@ -364,6 +497,15 @@ const typeColor: Record<Event["type"], string> = {
       align-items: flex-start;
     }
 
+    .event-address {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .address-text {
+      white-space: normal;
+    }
+
     /* L'allineamento orizzontale millimetrico che cercavi */
     .event-actions {
       display: flex;
@@ -371,6 +513,7 @@ const typeColor: Record<Event["type"], string> = {
       align-items: center;
       gap: 0.75rem; /* Spazio pulito e ridotto tra MAIN e FREE */
       width: 100%;
+      margin-top: 0.25rem;
     }
   }
 </style>
