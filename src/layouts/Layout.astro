@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
 
 const { title = "DJ Portfolio" } = Astro.props;
 ---
@@ -11,19 +12,24 @@ const { title = "DJ Portfolio" } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<script is:inline>
 			const theme = (() => {
-				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-					return localStorage.getItem('theme');
+				if (
+					typeof localStorage !== "undefined" &&
+					localStorage.getItem("theme")
+				) {
+					return localStorage.getItem("theme");
 				}
-				if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-					return 'light';
+				if (
+					window.matchMedia("(prefers-color-scheme: light)").matches
+				) {
+					return "light";
 				}
-				return 'dark';
+				return "dark";
 			})();
 
-			if (theme === 'light') {
-				document.documentElement.setAttribute('data-theme', 'light');
+			if (theme === "light") {
+				document.documentElement.setAttribute("data-theme", "light");
 			} else {
-				document.documentElement.setAttribute('data-theme', 'dark');
+				document.documentElement.setAttribute("data-theme", "dark");
 			}
 		</script>
 
@@ -44,5 +50,6 @@ const { title = "DJ Portfolio" } = Astro.props;
 
 	<body>
 		<slot />
+		<Analytics />
 	</body>
 </html>
