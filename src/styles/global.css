@@ -52,6 +52,13 @@ body {
   overflow-x: hidden;
 }
 
+/* Glassmorphic/transparent navbar styles */
+nav {
+  background: rgba(5, 5, 5, 0.75) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 .section {
   max-width: 1400px;
   margin: 0 auto;
@@ -112,29 +119,36 @@ html[data-theme="light"] body {
   color: var(--text);
 }
 
-/* Shift light mode hero wallpaper upwards to align correctly */
-html[data-theme="light"] .theme-light-only img {
-  height: 120% !important;
-  object-position: top !important;
-  transform: translateY(-15%) !important;
+/* Shift light mode hero wallpaper upwards to align correctly on desktop only */
+@media (min-width: 769px) {
+  html[data-theme="light"] .theme-light-only img {
+    height: 120% !important;
+    object-position: top !important;
+    transform: translateY(-15%) !important;
+  }
 }
 
 html[data-theme="light"] nav {
-  background: var(--nav-bg) !important;
-  border-color: var(--nav-border) !important;
+  background: linear-gradient(135deg, rgba(143, 0, 255, 0.8) 0%, rgba(79, 70, 229, 0.8) 100%) !important;
+  border-bottom: none !important;
 }
 
 html[data-theme="light"] nav a {
-  color: #3f3f46 !important;
-  /* text-zinc-700 */
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
 html[data-theme="light"] nav a:hover {
-  color: #000000 !important;
+  color: #ffffff !important;
 }
 
 html[data-theme="light"] #menu-toggle span {
-  background-color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Invert the dark logo in the navbar so it renders in clean white against the purple gradient */
+html[data-theme="light"] nav .logo-light-theme {
+  filter: brightness(0) invert(1) !important;
+  animation: none !important;
 }
 
 html[data-theme="light"] #mobile-menu {
@@ -148,6 +162,18 @@ html[data-theme="light"] #mobile-menu a {
 
 html[data-theme="light"] #mobile-menu a:hover {
   color: #000000 !important;
+}
+
+/* Ensure the theme toggle button inside the mobile menu has contrast in light mode */
+html[data-theme="light"] #theme-toggle-mobile {
+  color: #27272a !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme="light"] #theme-toggle-mobile:hover {
+  color: #000000 !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Calendar component overrides */
@@ -171,6 +197,15 @@ html[data-theme="light"] .event-row:hover {
 
 html[data-theme="light"] .divider {
   background: var(--border) !important;
+}
+
+@media (max-width: 600px) {
+  html[data-theme="light"] .event-row {
+    border-color: #27272a !important;
+  }
+  html[data-theme="light"] .month-label {
+    color: #000000 !important;
+  }
 }
 
 html[data-theme="light"] .day-name {
@@ -203,6 +238,11 @@ html[data-theme="light"] .website-link:hover {
 
 html[data-theme="light"] .sold-out {
   color: #71717a !important;
+}
+
+/* About component overrides */
+html[data-theme="light"] #about p {
+  color: #000000 !important;
 }
 
 /* Contact component overrides */

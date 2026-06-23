@@ -15,30 +15,30 @@ const events: Event[] = [
   {
     date: "2026-07-05",
     venue: "Maracaibo",
-    city: "Cava d'aliga",
+    city: "Cava d'Aliga",
     time: "17:00",
     type: "main",
-    address: "Viale della Pace, Cava d'Aliga ",
+    address: "Lungomare Cava d'Aliga",
     websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
     mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
   },
   {
     date: "2026-07-19",
     venue: "Maracaibo",
-    city: "Cava d'aliga",
+    city: "Cava d'Aliga",
     time: "17:00",
     type: "main",
-    address: "Viale della Pace, Cava d'Aliga",
+    address: "Lungomare Cava d'Aliga",
     websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
     mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
   },
   {
     date: "2026-08-02",
     venue: "Maracaibo",
-    city: "Cava d'aliga",
+    city: "Cava d'Aliga",
     time: "17:00",
     type: "main",
-    address: "Viale della Pace, Cava d'Aliga",
+    address: "Lungomare Cava d'Aliga",
     websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
     mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
   },
@@ -106,6 +106,29 @@ const typeColor: Record<Event["type"], string> = {
                     <div class="date-block">
                       <span class="day-num">{dayNum}</span>
                       <span class="day-name">{dayName}</span>
+
+                      {/* Mobile-only tags directly under the date */}
+                      <div class="event-actions mobile-actions">
+                        <span
+                          class="type-badge"
+                          style={`color: ${typeColor[ev.type]}; border-color: ${typeColor[ev.type]};`}
+                        >
+                          {typeLabel[ev.type]}
+                        </span>
+
+                        {ev.ticketUrl ? (
+                          <a
+                            href={ev.ticketUrl}
+                            class="ticket-btn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            TICKETS
+                          </a>
+                        ) : (
+                          <span class="sold-out">FREE</span>
+                        )}
+                      </div>
                     </div>
                     <div class="divider mr-8" />
                   </div>
@@ -175,8 +198,8 @@ const typeColor: Record<Event["type"], string> = {
                       )}
                     </div>
 
-                    {/* Badge e Azioni (Sempre affiancati) */}
-                    <div class="event-actions">
+                    {/* Badge e Azioni (Desktop only, hidden on mobile) */}
+                    <div class="event-actions desktop-actions">
                       <span
                         class="type-badge"
                         style={`color: ${typeColor[ev.type]}; border-color: ${typeColor[ev.type]};`}
@@ -287,7 +310,8 @@ const typeColor: Record<Event["type"], string> = {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 0;
+    gap: 4rem;
+    padding: 2rem 0;
     border-bottom: 1px solid var(--border);
     transition: background 0.18s ease;
   }
@@ -438,6 +462,10 @@ const typeColor: Record<Event["type"], string> = {
     flex-shrink: 0;
   }
 
+  .mobile-actions {
+    display: none;
+  }
+
   .type-badge {
     font-size: 0.6rem;
     font-weight: 700;
@@ -480,7 +508,8 @@ const typeColor: Record<Event["type"], string> = {
   @media (max-width: 600px) {
     .event-row {
       align-items: flex-start; /* Allinea in alto rispetto alla data */
-      padding: 1.25rem 0.5rem;
+      padding: 2rem 0.5rem;
+      gap: 2rem;
     }
 
     /* Forza il contenuto principale a scendere in colonna perfettamente squadrato */
@@ -506,14 +535,26 @@ const typeColor: Record<Event["type"], string> = {
       white-space: normal;
     }
 
-    /* L'allineamento orizzontale millimetrico che cercavi */
-    .event-actions {
+    .desktop-actions {
+      display: none !important;
+    }
+
+    .mobile-actions {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      gap: 0.75rem; /* Spazio pulito e ridotto tra MAIN e FREE */
+      gap: 0.45rem;
       width: 100%;
-      margin-top: 0.25rem;
+      margin-top: 0.75rem;
+    }
+
+    .divider {
+      display: none;
+    }
+
+    .month-label {
+      font-size: 1.1rem;
+      font-weight: 700;
     }
   }
 </style>

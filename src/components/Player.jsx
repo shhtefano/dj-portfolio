@@ -27,7 +27,7 @@ export default function Player({ tracks = { previews: [], beats: [] } }) {
     // Ritorna il percorso puntando alla cartella corretta (cover al singolare) con estensione .jpg
     // Se usi i .png, sostituisci .jpg con .png qui sotto
     // return `/images/covers/${audioFilename}.svg`;
-    return `/images/covers/cover_default.svg`;
+    return `/images/logo_omino.svg`;
   };
 
   const handleNext = useCallback(() => {
