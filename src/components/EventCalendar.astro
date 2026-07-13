@@ -83,6 +83,15 @@ const sorted = [...events].sort(
   (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime(),
 );
 
+const buildToday = new Date();
+const buildYear = buildToday.getFullYear();
+const buildMonth = String(buildToday.getMonth() + 1).padStart(2, '0');
+const buildDay = String(buildToday.getDate()).padStart(2, '0');
+const todayStr = `${buildYear}-${buildMonth}-${buildDay}`;
+
+const buildUpcomingCount = events.filter(ev => ev.date >= todayStr).length;
+const buildPastCount = events.filter(ev => ev.date < todayStr).length;
+
 const grouped: Record<string, Event[]> = {};
 for (const ev of sorted) {
   const d = parseDate(ev.date);
@@ -107,7 +116,18 @@ const typeColor: Record<Event["type"], string> = {
 <section class="calendar" id="dates">
   <h2 class="section-title md:px-34">CALENDARIO<span class="dot">_</span></h2>
 
-  <div class="months md:px-34 xs:p-0">
+  <div class="calendar-tabs md:px-34">
+    <button class="tab-btn active" data-tab="upcoming">
+      PROSSIMI
+      <span class="count-badge" id="upcoming-count">{buildUpcomingCount}</span>
+    </button>
+    <button class="tab-btn" data-tab="past">
+      PASSATI
+      <span class="count-badge" id="past-count">{buildPastCount}</span>
+    </button>
+  </div>
+
+  <div class="months show-upcoming md:px-34 xs:p-0">
     {
       Object.entries(grouped).map(([month, evs]) => (
         <div class="month-block">
@@ -120,7 +140,12 @@ const typeColor: Record<Event["type"], string> = {
                 .toLocaleDateString("it-IT", { weekday: "short" })
                 .toUpperCase();
               return (
-                <li class="event-row">
+                <li
+                  class="event-row"
+                  data-date={ev.date}
+                  data-is-past={ev.date < todayStr ? "true" : undefined}
+                  data-is-upcoming={ev.date >= todayStr ? "true" : undefined}
+                >
                   {/* Blocco Data (Colonna Sinistra fissa) */}
                   <div class="date-side">
                     <div class="date-block">
@@ -300,10 +325,102 @@ const typeColor: Record<Event["type"], string> = {
     }
   }
 
+  /* ── Calendar Tabs Selector ── */
+  .calendar-tabs {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.2rem;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .tab-btn:hover {
+    color: var(--white);
+  }
+
+  .tab-btn.active {
+    color: var(--white);
+  }
+
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1.3rem; /* Aligns precisely with the parent border-bottom */
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--purple);
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+  }
+
+  .tab-btn.active::after {
+    transform: scaleX(1);
+  }
+
+  .count-badge {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: var(--border);
+    color: var(--muted);
+    padding: 2px 7px;
+    border-radius: 12px;
+    line-height: 1;
+    transition: all 0.25s ease;
+  }
+
+  .tab-btn.active .count-badge {
+    background: var(--purple);
+    color: var(--white);
+  }
+
+  /* ── Months & Filter/Order Styles ── */
   .months {
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
+  }
+
+  /* Filtering visibility logic */
+  .months.show-upcoming .event-row[data-is-past="true"] {
+    display: none;
+  }
+  .months.show-past .event-row[data-is-upcoming="true"] {
+    display: none;
+  }
+
+  /* Hide empty month blocks using :has */
+  .months.show-upcoming .month-block:not(:has(.event-row[data-is-upcoming="true"])) {
+    display: none;
+  }
+  .months.show-past .month-block:not(:has(.event-row[data-is-past="true"])) {
+    display: none;
+  }
+
+  /* Reverse chronological order for past events */
+  .months.show-past {
+    flex-direction: column-reverse;
+  }
+  .months.show-past .event-list {
+    flex-direction: column-reverse;
   }
 
   .month-label {
@@ -578,3 +695,62 @@ const typeColor: Record<Event["type"], string> = {
     }
   }
 </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+    
+    const rows = document.querySelectorAll(".event-row");
+    const container = document.querySelector(".months");
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    
+    let upcomingCount = 0;
+    let pastCount = 0;
+    
+    rows.forEach(row => {
+      const dateStr = row.getAttribute("data-date");
+      if (dateStr) {
+        if (dateStr < todayStr) {
+          row.setAttribute("data-is-past", "true");
+          row.removeAttribute("data-is-upcoming");
+          pastCount++;
+        } else {
+          row.setAttribute("data-is-upcoming", "true");
+          row.removeAttribute("data-is-past");
+          upcomingCount++;
+        }
+      }
+    });
+    
+    // Update badge counts dynamically
+    const upcomingBadge = document.getElementById("upcoming-count");
+    const pastBadge = document.getElementById("past-count");
+    if (upcomingBadge) upcomingBadge.textContent = upcomingCount.toString();
+    if (pastBadge) pastBadge.textContent = pastCount.toString();
+    
+    // Tab switching interactivity
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.getAttribute("data-tab");
+        
+        tabBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        
+        if (container) {
+          if (tab === "upcoming") {
+            container.classList.remove("show-past");
+            container.classList.add("show-upcoming");
+          } else {
+            container.classList.remove("show-upcoming");
+            container.classList.add("show-past");
+          }
+        }
+      });
+    });
+  });
+</script>
+

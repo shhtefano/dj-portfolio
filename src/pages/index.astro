@@ -72,14 +72,15 @@ const hasTracks = tracksData.previews.length > 0 || tracksData.beats.length > 0;
 
   <Hero />
 
+  <EventCalendar />
+
   <About />
 
-  <EventCalendar />
   <Contact />
 
   {hasTracks && <Player tracks={tracksData} client:load />}
 
-  <Music />
+  <!-- <Music /> -->
 
   <Gallery />
 
