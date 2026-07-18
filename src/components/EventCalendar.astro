@@ -23,6 +23,47 @@ const events: Event[] = [
     mapsUrl: "https://maps.app.goo.gl/vejmE4knujR85Wf78",
   },
   {
+    date: "2026-07-15",
+    venue: "Pata Pata",
+    city: "Sampieri",
+    time: "17:00",
+    type: "b2b",
+    address: "Lungomare Sampieri",
+    websiteUrl: "https://www.instagram.com/patapata.sampieri/",
+    mapsUrl: "https://maps.app.goo.gl/vejmE4knujR85Wf78",
+  },
+  {
+    date: "2026-07-22",
+    venue: "Pata Pata",
+    city: "Sampieri",
+    time: "23:00",
+    type: "b2b",
+    address: "Lungomare Sampieri",
+    websiteUrl: "https://www.instagram.com/patapata.sampieri/",
+    mapsUrl: "https://maps.app.goo.gl/vejmE4knujR85Wf78",
+  },
+
+  {
+    date: "2026-07-25",
+    venue: "Pata Pata",
+    city: "Sampieri",
+    time: "23:00",
+    type: "main",
+    address: "Lungomare Sampieri",
+    websiteUrl: "https://www.instagram.com/patapata.sampieri/",
+    mapsUrl: "https://maps.app.goo.gl/vejmE4knujR85Wf78",
+  },
+  {
+    date: "2026-08-17",
+    venue: "Evento Privato",
+    city: "Modica",
+    time: "23:00",
+    type: "main",
+    address: "",
+    websiteUrl: "",
+    mapsUrl: "",
+  },
+  {
     date: "2026-06-26",
     venue: "Miscele",
     city: "Scicli",
@@ -38,6 +79,16 @@ const events: Event[] = [
     city: "Cava d'Aliga",
     time: "17:00",
     type: "main",
+    address: "Lungomare Cava d'Aliga",
+    websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
+    mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
+  },
+  {
+    date: "2026-07-26",
+    venue: "Maracaibo",
+    city: "Cava d'Aliga",
+    time: "17:00",
+    type: "b2b",
     address: "Lungomare Cava d'Aliga",
     websiteUrl: "https://www.instagram.com/ristorantemaracaibo/",
     mapsUrl: "https://maps.app.goo.gl/CETLFBHsZ1d8WPwA7",
@@ -85,12 +136,12 @@ const sorted = [...events].sort(
 
 const buildToday = new Date();
 const buildYear = buildToday.getFullYear();
-const buildMonth = String(buildToday.getMonth() + 1).padStart(2, '0');
-const buildDay = String(buildToday.getDate()).padStart(2, '0');
+const buildMonth = String(buildToday.getMonth() + 1).padStart(2, "0");
+const buildDay = String(buildToday.getDate()).padStart(2, "0");
 const todayStr = `${buildYear}-${buildMonth}-${buildDay}`;
 
-const buildUpcomingCount = events.filter(ev => ev.date >= todayStr).length;
-const buildPastCount = events.filter(ev => ev.date < todayStr).length;
+const buildUpcomingCount = events.filter((ev) => ev.date >= todayStr).length;
+const buildPastCount = events.filter((ev) => ev.date < todayStr).length;
 
 const grouped: Record<string, Event[]> = {};
 for (const ev of sorted) {
@@ -360,7 +411,7 @@ const typeColor: Record<Event["type"], string> = {
   }
 
   .tab-btn::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -1.3rem; /* Aligns precisely with the parent border-bottom */
     left: 0;
@@ -408,7 +459,8 @@ const typeColor: Record<Event["type"], string> = {
   }
 
   /* Hide empty month blocks using :has */
-  .months.show-upcoming .month-block:not(:has(.event-row[data-is-upcoming="true"])) {
+  .months.show-upcoming
+    .month-block:not(:has(.event-row[data-is-upcoming="true"])) {
     display: none;
   }
   .months.show-past .month-block:not(:has(.event-row[data-is-past="true"])) {
@@ -700,18 +752,18 @@ const typeColor: Record<Event["type"], string> = {
   document.addEventListener("DOMContentLoaded", () => {
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
     const todayStr = `${year}-${month}-${day}`;
-    
+
     const rows = document.querySelectorAll(".event-row");
     const container = document.querySelector(".months");
     const tabBtns = document.querySelectorAll(".tab-btn");
-    
+
     let upcomingCount = 0;
     let pastCount = 0;
-    
-    rows.forEach(row => {
+
+    rows.forEach((row) => {
       const dateStr = row.getAttribute("data-date");
       if (dateStr) {
         if (dateStr < todayStr) {
@@ -725,21 +777,21 @@ const typeColor: Record<Event["type"], string> = {
         }
       }
     });
-    
+
     // Update badge counts dynamically
     const upcomingBadge = document.getElementById("upcoming-count");
     const pastBadge = document.getElementById("past-count");
     if (upcomingBadge) upcomingBadge.textContent = upcomingCount.toString();
     if (pastBadge) pastBadge.textContent = pastCount.toString();
-    
+
     // Tab switching interactivity
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         const tab = btn.getAttribute("data-tab");
-        
-        tabBtns.forEach(b => b.classList.remove("active"));
+
+        tabBtns.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        
+
         if (container) {
           if (tab === "upcoming") {
             container.classList.remove("show-past");
@@ -753,4 +805,3 @@ const typeColor: Record<Event["type"], string> = {
     });
   });
 </script>
-

@@ -18,11 +18,6 @@ const { title = "DJ Portfolio" } = Astro.props;
 				) {
 					return localStorage.getItem("theme");
 				}
-				if (
-					window.matchMedia("(prefers-color-scheme: light)").matches
-				) {
-					return "light";
-				}
 				return "dark";
 			})();
 
